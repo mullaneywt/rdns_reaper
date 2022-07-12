@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.0.6
+
+**Bugfixes**
+
+Fixed a problem with version strings in __init__
+
+**Known Caveats** 
+
+From 0.0.5: should probably change around the checking of addresses to make it less resource intensive if you are processing a large list
+
+
 ## 0.0.5
 
 **Bugfixes**
