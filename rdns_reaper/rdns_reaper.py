@@ -217,9 +217,25 @@ class rdns_reaper:
 
     def resolve_all(self):
         """Resolve all unknown IPs in parallel."""
-        pending_ips = [
-            ip for ip, hostname in self._dns_dict.items() if hostname is None
-        ]
+        """TODO: Look at doing this in a less resource intensive way"""
+        if self._limit_to_rfc1918:
+            pending_ips = [
+                key
+                for key, value in self._dns_dict.items()
+                if value is None
+                and IPAddress(key).version == 4
+                and self._isreservedIPv4(key) is False
+                and self._isrfc1918(key) is True
+            ]
+        else:
+            pending_ips = [
+                key
+                for key, value in self._dns_dict.items()
+                if value is None
+                and IPAddress(key).version == 4
+                and self._isreservedIPv4(key) is False
+            ]
+
         with concurrent.futures.ThreadPoolExecutor(
             max_workers=self._concurrent
         ) as executor:
@@ -228,7 +244,11 @@ class rdns_reaper:
     def resolve_all_serial(self):
         """Resolve all unknown IPs serially."""
         pending_ips = [key for key, value in self._dns_dict.items() if value is None]
+
         for key in pending_ips:
+            if IPAddress(key).version != 4:
+                raise TypeError("Only IPv4 addresses are accepted at this time")
+
             if self._limit_to_rfc1918:
                 if (self._isrfc1918(key) is False) and (
                     self._isreservedIPv4(key) is False
