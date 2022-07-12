@@ -18,3 +18,16 @@ $ pip install rdns-reaper
 $
 ```
 
+### Usage
+```python
+>>> from rdns_reaper import rdns_reaper
+>>> rdr = rdns_reaper(limit_to_rfc1918=False, concurrent=20, unresolvable=r"N\A")
+
+>>> iplist = ["8.8.8.8", "1.1.1.1", "8.8.4.4"]
+>>> rdr.add_ip_list(iplist)
+>>> rdr.resolve_all()
+
+>>> rdr["1.1.1.1"]
+one.one.one.one
+
+```
