@@ -30,4 +30,16 @@ $
 >>> rdr["1.1.1.1"]
 one.one.one.one
 
+>>> for address in rdr:
+>>>   print(address)
+{
+	('8.8.8.8', 'dns.google')
+	('1.1.1.1', 'one.one.one.one')
+	('8.8.4.4', 'dns.google')
+}
 ```
+
+License
+-------
+
+This project currently is not licensed for use by third parties and all rights are retained by the creator.  Plans for adoption of a common open source license are in the works.
