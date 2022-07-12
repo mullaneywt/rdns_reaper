@@ -1,5 +1,6 @@
 from rdns_reaper import rdns_reaper
 
+
 def main():
     """Test functionality."""
     dr = rdns_reaper(limit_to_rfc1918=True, concurrent=20, unresolvable=r"N\A")

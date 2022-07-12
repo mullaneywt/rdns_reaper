@@ -5,5 +5,5 @@ wheel
 netaddr
 pyyaml
 pytest
-pytest-cov
+pytest - cov
 tox
