@@ -1,0 +1,6 @@
+pip
+twine
+setuptools
+wheel
+pytest
+tox
