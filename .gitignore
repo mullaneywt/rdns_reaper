@@ -109,6 +109,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+Scripts/
+rdns_reaper/pyvenv.cfg
 
 # Spyder project settings
 .spyderproject
