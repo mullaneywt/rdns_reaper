@@ -130,3 +130,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .pypirc
+
+#Sublime
+Sublime Project/
