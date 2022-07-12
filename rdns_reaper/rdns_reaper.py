@@ -1,8 +1,8 @@
 import copy
 import socket
-import yaml
 import concurrent.futures
-from netaddr import IPAddress, IPNetwork, AddrFormatError
+import yaml
+from netaddr import IPAddress, IPNetwork, IPSet, AddrFormatError
 
 
 class rdns_reaper:
@@ -230,10 +230,13 @@ class rdns_reaper:
         pending_ips = [key for key, value in self._dns_dict.items() if value is None]
         for key in pending_ips:
             if self._limit_to_rfc1918:
-                if self._isrfc1918(key) is False:
+                if (self._isrfc1918(key) is False) and (
+                    self._isreservedIPv4(key) is False
+                ):
                     self._resolve_function(key)
             else:
-                self._resolve_function(key)
+                if self._isreservedIPv4(key) is False:
+                    self._resolve_function(key)
 
     def savefile(self, filename=None):
         """Save internal dictionary to YAML file."""
@@ -270,14 +273,35 @@ class rdns_reaper:
     def _isrfc1918(address_txt):
         """Determine if an address is RFC1918 private or not."""
         address = IPAddress(address_txt)
-        n1 = IPNetwork("10.0.0.0/8")
-        if address in n1:
+        rfc1918_networks = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+        rfc1918_IPSet = IPSet(rfc1918_networks)
+
+        if address in rfc1918_IPSet:
             return True
-        n2 = IPNetwork("172.16.0.0/12")
-        if address in n2:
-            return True
-        n3 = IPNetwork("192.168.0.0/16")
-        if address in n3:
+
+        return False
+
+    @staticmethod
+    def _isreservedIPv4(address_txt):
+        """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
+        address = IPAddress(address_txt)
+        reserved_network_list = [
+            "0.0.0.0/8",
+            "100.64.0.0/10",
+            "127.0.0.0/8",
+            "169.254.0.0/16",
+            "192.0.0.0/24",
+            "192.0.2.0/24",
+            "192.88.99.0/24",
+            "198.51.100.0/24",
+            "203.0.113.0/24",
+            "224.0.0.0/4",
+            "233.252.0.0/24",
+            "240.0.0.0/4",
+            "255.255.255.255/32",
+        ]
+        reserved_network_IPSet = IPSet(reserved_network_list)
+        if address_txt in reserved_network_IPSet:
             return True
         return False
 
