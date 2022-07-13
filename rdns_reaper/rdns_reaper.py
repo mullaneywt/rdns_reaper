@@ -197,6 +197,7 @@ class rdns_reaper:
         """Set the RFC1918 filter."""
         if type(value) is not bool:
             raise TypeError
+        self._limit_to_rfc1918 = value
 
     def loadfile(self, filename):
         """Load saved data in YAML format."""
