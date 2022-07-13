@@ -248,6 +248,7 @@ class rdns_reaper:
         return True
 
     def _build_resolve_list(self):
+        """Build list of IP's to perform resolver on, shared by serial and parallel methods."""
         """TODO: Look at doing this in a less resource intensive way"""
         initial_pending_ips = [
             key for key, value in self._dns_dict.items() if value is None
