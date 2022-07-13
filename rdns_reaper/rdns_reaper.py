@@ -4,6 +4,36 @@ import concurrent.futures
 import yaml
 from netaddr import IPAddress, IPNetwork, IPSet, AddrFormatError
 
+IPV4_RESERVED_NETWORK_LIST = [
+    "0.0.0.0/8",
+    "100.64.0.0/10",
+    "127.0.0.0/8",
+    "169.254.0.0/16",
+    "192.0.0.0/24",
+    "192.0.2.0/24",
+    "192.88.99.0/24",
+    "198.51.100.0/24",
+    "203.0.113.0/24",
+    "224.0.0.0/4",
+    "233.252.0.0/24",
+    "240.0.0.0/4",
+    "255.255.255.255/32",
+]
+
+IPV4_RFC1918_NETWORK_LIST = [
+    "10.0.0.0/8",
+    "172.16.0.0/12",
+    "192.168.0.0/16",
+]
+
+IPV6_RESERVED_NETWORK_LIST = [
+    "ff00::/8",
+    "fe80::/10",
+    "fc00::/7",
+    "2002::/16",
+    "2001:db8::/32",
+    "100::/64",
+]
 
 class rdns_reaper:
     def __init__(self, *args, **kwargs):
@@ -219,23 +249,50 @@ class rdns_reaper:
     def resolve_all(self):
         """Resolve all unknown IPs in parallel."""
         """TODO: Look at doing this in a less resource intensive way"""
+
+        initial_pending_ips = [key for key, value in self._dns_dict.items() if value is None]
         if self._limit_to_rfc1918:
-            pending_ips = [
-                key
-                for key, value in self._dns_dict.items()
-                if value is None
-                and IPAddress(key).version == 4
-                and self._isreservedIPv4(key) is False
-                and self._isrfc1918(key) is True
-            ]
+            print("Liminting to RFC1918")
+            IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
         else:
-            pending_ips = [
-                key
-                for key, value in self._dns_dict.items()
-                if value is None
-                and IPAddress(key).version == 4
-                and self._isreservedIPv4(key) is False
-            ]
+            IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
+
+        IPv6_skipped_networks = IPSet(IPV6_RESERVED_NETWORK_LIST)
+        print(IPv4_skipped_networks)
+        print(IPv6_skipped_networks)
+
+        pending_ips = list()
+
+        for key in initial_pending_ips:
+            address = IPAddress(key)
+
+            if self._limit_to_rfc1918 == False:
+                if (address.version == 4) and (address not in IPv4_skipped_networks):
+                    pending_ips.append(key)
+                elif (address.version == 6) and (address not in IPv6_skipped_networks):
+                    pending_ips.append(key)
+            else:
+                if (address in IPSet(IPV4_RFC1918_NETWORK_LIST)):
+                    pending_ips.append(key)
+
+        print(pending_ips)
+        # if self._limit_to_rfc1918:
+        #     pending_ips = [
+        #         key
+        #         for key, value in self._dns_dict.items()
+        #         if value is None
+        #         and IPAddress(key).version == 4
+        #         and self._isreservedIPv4(key) is False
+        #         and self._isrfc1918(key) is True
+        #     ]
+        # else:
+        #     pending_ips = [
+        #         key
+        #         for key, value in self._dns_dict.items()
+        #         if value is None
+        #         and IPAddress(key).version == 4
+        #         and self._isreservedIPv4(key) is False
+        #     ]
 
         with concurrent.futures.ThreadPoolExecutor(
             max_workers=self._concurrent
@@ -247,17 +304,20 @@ class rdns_reaper:
         pending_ips = [key for key, value in self._dns_dict.items() if value is None]
 
         for key in pending_ips:
-            if IPAddress(key).version != 4:
-                raise TypeError("Only IPv4 addresses are accepted at this time")
-
-            if self._limit_to_rfc1918:
-                if (self._isrfc1918(key) is False) and (
-                    self._isreservedIPv4(key) is False
-                ):
+            if IPAddress(key).version == 4:
+                if self._limit_to_rfc1918:
+                    if (self._isrfc1918(key) is False) and (
+                        self._isreservedIPv4(key) is False
+                    ):
+                        self._resolve_function(key)
+                else:
+                    if self._isreservedIPv4(key) is False:
+                        self._resolve_function(key)
+            elif IPAddress(key).version == 6:
+                if IPAddress(key) not in IPSet(["fe80::/10", "ff00::/8"]):
                     self._resolve_function(key)
             else:
-                if self._isreservedIPv4(key) is False:
-                    self._resolve_function(key)
+                raise TypeError("Only IPv4 and IPv6 addresses are accepted at this time")
 
     def savefile(self, filename=None):
         """Save internal dictionary to YAML file."""
@@ -306,22 +366,8 @@ class rdns_reaper:
     def _isreservedIPv4(address_txt):
         """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
         address = IPAddress(address_txt)
-        reserved_network_list = [
-            "0.0.0.0/8",
-            "100.64.0.0/10",
-            "127.0.0.0/8",
-            "169.254.0.0/16",
-            "192.0.0.0/24",
-            "192.0.2.0/24",
-            "192.88.99.0/24",
-            "198.51.100.0/24",
-            "203.0.113.0/24",
-            "224.0.0.0/4",
-            "233.252.0.0/24",
-            "240.0.0.0/4",
-            "255.255.255.255/32",
-        ]
-        reserved_network_IPSet = IPSet(reserved_network_list)
+
+        reserved_network_IPSet = IPSet(IPV4_RESERVED_NETWORK_LIST)
         if address_txt in reserved_network_IPSet:
             return True
         return False
@@ -345,3 +391,11 @@ class rdns_reaper:
             else:
                 raise StopIteration
             pass
+
+
+dns = rdns_reaper(limit_to_rfc1918=True)
+dns += "2600::"
+dns += "1.1.1.1"
+dns.resolve_all()
+
+print(dns.get_dict())
