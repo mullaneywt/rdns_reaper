@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.0.7
+
+**Bugfixes**
+
+Fixed a problem with the limit_to_rfc1918 function not actually doing anything
+
+**Known Caveats** 
+
+From 0.0.5: should probably change around the checking of addresses to make it less resource intensive if you are processing a large list
+
 ## 0.0.6
 
 **Bugfixes**
