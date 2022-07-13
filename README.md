@@ -1,5 +1,8 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
-[![Python: 3.6-3.11](https://img.shields.io/pypi/pyversions/rdns-reaper)](https://www.python.org)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/rdns-reaper)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/rdns-reaper)
+![PyPI](https://img.shields.io/pypi/v/rdns-reaper)
+![piwheels](https://img.shields.io/piwheels/v/rdns-reaper)
 
 rdns-reaper: Reverse DNS lookup Engine
 ======================================
