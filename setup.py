@@ -10,7 +10,6 @@ setuptools.setup(
     author='Will Mullaney',
     author_email='rdns-reaper@mullaneywt.anonaddy.com',
     description='Reverse DNS lookup engine',
-    homepage='https://github.com/mullaneywt/rdns_reaper',
     install_requires=['netaddr>=0.8.0', 'pyyaml>=6.0'],
     keywords=['reverse', 'dns'],
     license='None',
