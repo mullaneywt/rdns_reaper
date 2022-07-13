@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.0.10
+
+**New Features**
+
+Basic IPv6 support is now available.  Reserved IPv6 addresses (multicast, link local, etc), will automatically be ignored by default
+
+**Known Caveats** 
+
+From 0.0.5: should probably change around the checking of addresses to make it less resource intensive if you are processing a large list - further work should be done here to improve this
+
 ## 0.0.8
 
 **Bugfixes**
