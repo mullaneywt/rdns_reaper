@@ -2,7 +2,7 @@ import copy
 import socket
 import concurrent.futures
 import yaml
-from netaddr import IPAddress, IPNetwork, IPSet, AddrFormatError
+from netaddr import IPAddress, IPSet, AddrFormatError
 
 IPV4_RESERVED_NETWORK_LIST = [
     "0.0.0.0/8",
@@ -27,12 +27,12 @@ IPV4_RFC1918_NETWORK_LIST = [
 ]
 
 IPV6_RESERVED_NETWORK_LIST = [
-    "ff00::/8",
-    "fe80::/10",
-    "fc00::/7",
-    "2002::/16",
-    "2001:db8::/32",
     "100::/64",
+    "2001:db8::/32",
+    "2002::/16",
+    "fc00::/7",
+    "fe80::/10",
+    "ff00::/8",
 ]
 
 
@@ -249,10 +249,10 @@ class rdns_reaper:
 
     def _build_resolve_list(self):
         """Build list of IP's to perform resolver on, shared by serial and parallel methods."""
-        """TODO: Look at doing this in a less resource intensive way"""
         initial_pending_ips = [
             key for key, value in self._dns_dict.items() if value is None
         ]
+
         if self._limit_to_rfc1918:
             IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
         else:
@@ -331,7 +331,6 @@ class rdns_reaper:
 
         if address in rfc1918_IPSet:
             return True
-
         return False
 
     @staticmethod
