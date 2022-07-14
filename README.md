@@ -71,7 +71,7 @@ The following parameters are supported when an instance of rdns_reaper is create
 
 Note that entries with None as a value will be reprocessed in subsequent resolver runs, while entries with any other value from the `unresolveable` parameter will not be processed again without manual intervention
 
-### Supported operands
+### Supported operators
 * \+, which can add two rdns_reaper objects, a string with a single IP address, or a set/list with one or more IP addresses 
 * \+=, which can add two rdns_reaper objects, a string with a single IP address, or a set/list with one or more IP addresses
 
