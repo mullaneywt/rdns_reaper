@@ -42,12 +42,9 @@ class rdns_reaper:
         self._dns_dict = dict()
         self._resolver_ip = None
 
-        if "limit_to_rfc1918" in kwargs.keys():
-            if isinstance(kwargs["limit_to_rfc1918"], bool):
-                self._limit_to_rfc1918 = kwargs["limit_to_rfc1918"]
-            else:
-                # User passed an invalid response
-                self._limit_to_rfc1918 = False
+        """Check for RFC1918 filtering"""
+        if "limit_to_rfc1918" in kwargs:
+            self.limit_to_rfc1918(kwargs["limit_to_rfc1918"])
         else:
             self._limit_to_rfc1918 = False
 
@@ -58,7 +55,7 @@ class rdns_reaper:
             else:
                 raise TypeError
         except KeyError:
-            self._concurrent = 1
+            self._concurrent = 5
 
         """Determine how to mark unresolvable entries"""
         try:
@@ -265,7 +262,7 @@ class rdns_reaper:
         for key in initial_pending_ips:
             address = IPAddress(key)
 
-            if self._limit_to_rfc1918 == False:
+            if self._limit_to_rfc1918 is False:
                 if (address.version == 4) and (address not in IPv4_skipped_networks):
                     pending_ips.append(key)
                 elif (address.version == 6) and (address not in IPv6_skipped_networks):
@@ -338,10 +335,31 @@ class rdns_reaper:
         """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
         address = IPAddress(address_txt)
 
-        reserved_network_IPSet = IPSet(IPV4_RESERVED_NETWORK_LIST)
-        if address_txt in reserved_network_IPSet:
-            return True
-        return False
+        if address.version == 4:
+            reserved_network_IPSet = IPSet(IPV4_RESERVED_NETWORK_LIST)
+            if address_txt in reserved_network_IPSet:
+                return True
+            return False
+        elif address.version == 6:
+            reserved_network_IPSet = IPSet(IPV6_RESERVED_NETWORK_LIST)
+            if address_txt in reserved_network_IPSet:
+                return True
+            return False
+        else:
+            raise ValueError
+
+    @staticmethod
+    def _isreservedIPv6(address_txt):
+        """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
+        address = IPAddress(address_txt)
+
+        if address.version == 6:
+            reserved_network_IPSet = IPSet(IPV6_RESERVED_NETWORK_LIST)
+            if address_txt in reserved_network_IPSet:
+                return True
+            return False
+        else:
+            raise ValueError
 
     class _reaper_iterator:
         def __init__(self, parentclass):
