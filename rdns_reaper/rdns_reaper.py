@@ -268,17 +268,17 @@ class rdns_reaper:
         pending_ipset = IPSet(initial_ip_list)
 
         try:
-            print(f"{pending_ipset=}")
+            # print(f"{pending_ipset=}")
             if self._filter_mode == "block":
                 result_ipset = pending_ipset - self._filter
             elif self._filter_mode == "allow":
                 result_ipset = pending_ipset & self._filter
 
-            print(f"{result_ipset=}")
+            # print(f"{result_ipset=}")
+            initial_pending_ips = [str(x) for x in result_ipset]
         except AttributeError:
-            pass
+            initial_pending_ips = [str(x) for x in pending_ipset]
 
-        initial_pending_ips = [str(x) for x in result_ipset]
 
         pending_ips = list()
 
