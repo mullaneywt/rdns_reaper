@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name='rdns_reaper',
-    version='0.0.10',
+    version='0.0.11rc1',
     author='Will Mullaney',
     author_email='rdns-reaper@mullaneywt.anonaddy.com',
     description='Reverse DNS lookup engine',
