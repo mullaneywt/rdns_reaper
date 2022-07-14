@@ -279,7 +279,6 @@ class rdns_reaper:
         except AttributeError:
             initial_pending_ips = [str(x) for x in pending_ipset]
 
-
         pending_ips = list()
 
         for key in initial_pending_ips:
