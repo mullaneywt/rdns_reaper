@@ -21,7 +21,18 @@ Installation and Usage
 ### PyPI
 ```shell
 $ pip install rdns-reaper
-$
+#or for a specific version (e.g. 0.0.10)
+$ pip install rdns-reaper==0.0.10
+```
+
+### Github with PIP
+```shell
+#Latest Full Release
+$ pip install git+https://github.com/mullaneywt/rdns_reaper/@releases
+#Latest Release Candidate
+$ pip install git+https://github.com/mullaneywt/rdns_reaper/
+#Specific Release Version (e.g. 0.0.10)
+$ pip install git+https://github.com/mullaneywt/rdns_reaper/@0.0.10
 ```
 
 ### Usage
