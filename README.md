@@ -68,6 +68,8 @@ The following parameters are supported when an instance of rdns_reaper is create
 | unresolvable | string | Value to populate if resolving fails | None |
 | filemode | ["r"\|"w"] | read only or read-write disk cache | None |
 | filename | string | Path and filename for YAML formatted disk cache | None |
+| filter | IPSet, string, list of strings | Sets a custom IP filter | None |
+| filtermode | ["allow"\|"block"] | set the filter mode to an allow list or a block list | None |
 
 Note that entries with None as a value will be reprocessed in subsequent resolver runs, while entries with any other value from the `unresolveable` parameter will not be processed again without manual intervention
 
@@ -88,6 +90,7 @@ Note that entries with None as a value will be reprocessed in subsequent resolve
 * clear_all_hostnames() - resets all names to None across entire instance
 * clearname(IP) - resets a name to None
 * get_dict() - returns a dictionary with addresses as keys and names as values
+* get_filter() - returns a tuple with custom filter information or None if not set
 * keys() - returns a list of all IP addresses in the instance
 * loadfile() - forces a load of the YAML based disk cache
 * remove_ip(IP) - removes an IP address (provided as a string)
@@ -95,9 +98,10 @@ Note that entries with None as a value will be reprocessed in subsequent resolve
 * resolve_all_serial() - launches a singular serial resolver process
 * savefile() - forces a save of the YAML based disk cache
 * setname(IP, NAME) - forces the name for a value (provided as strings)
+* set_filter(IPSet, [mode=]) - sets a custom filter based on an IPSet, IP network in a string, or a list of strings containing IP networks.  Optional mode argument can be `block` or `allow` to set filtering to a block list or allow list
 * values() - returns a list of all DNS names
 
 License
 -------
 
-This project currently is not licensed for use by third parties and all rights are retained by the creator.  Plans for adoption of a common open source license are in the works.
+This project currently is not licensed for use by third parties, and all rights are retained by the creator.  Plans for adoption of a common open source license are in the works.
