@@ -58,8 +58,8 @@ class rdns_reaper:
 
         """Check for custom filtering"""
         if kwargs.get("filter") is not None:
-            if kwargs.get("filter_mode") is not None:
-                self.set_filter(kwargs["filter"], mode=kwargs["filter_mode"])
+            if kwargs.get("filtermode") is not None:
+                self.set_filter(kwargs["filter"], mode=kwargs["filtermode"])
             else:
                 self.set_filter(kwargs["filter"])
 
