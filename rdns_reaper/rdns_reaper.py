@@ -56,6 +56,13 @@ class rdns_reaper:
         else:
             self._limit_to_rfc1918 = False
 
+        """Check for custom filtering"""
+        if kwargs.get("filter") is not None:
+            if kwargs.get("filter_mode") is not None:
+                self.set_filter(kwargs["filter"], mode=kwargs["filter_mode"])
+            else:
+                self.set_filter(kwargs["filter"])
+
         """Process parallel lookup concurrency"""
         try:
             if type(kwargs["concurrent"]) is int:
@@ -220,6 +227,13 @@ class rdns_reaper:
     def get_dict(self):
         """Return the internal dictionary to the calling function."""
         return self._dns_dict
+
+    def get_filter(self):
+        """Return current filter status."""
+        try:
+            return (self._filter, self._filter_mode)
+        except AttributeError:
+            return None
 
     def items(self):
         """Return the IP address and hostnames as k, v pairs in list format."""
