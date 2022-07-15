@@ -43,6 +43,8 @@ IPV6_RESERVED_NETWORK_LIST = [
 
 
 class rdns_reaper:
+    _filter = None
+
     def __init__(self, *args, **kwargs):
         """Initialize class and take in user options."""
         self._dns_dict = dict()
@@ -53,6 +55,13 @@ class rdns_reaper:
             self.limit_to_rfc1918(kwargs["limit_to_rfc1918"])
         else:
             self._limit_to_rfc1918 = False
+
+        """Check for custom filtering"""
+        if kwargs.get("filter") is not None:
+            if kwargs.get("filter_mode") is not None:
+                self.set_filter(kwargs["filter"], mode=kwargs["filter_mode"])
+            else:
+                self.set_filter(kwargs["filter"])
 
         """Process parallel lookup concurrency"""
         try:
@@ -219,6 +228,13 @@ class rdns_reaper:
         """Return the internal dictionary to the calling function."""
         return self._dns_dict
 
+    def get_filter(self):
+        """Return current filter status."""
+        try:
+            return (self._filter, self._filter_mode)
+        except AttributeError:
+            return None
+
     def items(self):
         """Return the IP address and hostnames as k, v pairs in list format."""
         return {ip: hostname for ip, hostname in self._dns_dict.items()}.items()
@@ -252,16 +268,30 @@ class rdns_reaper:
 
     def _build_resolve_list(self):
         """Build list of IP's to perform resolver on, shared by serial and parallel methods."""
-        initial_pending_ips = [
-            key for key, value in self._dns_dict.items() if value is None
-        ]
-
         if self._limit_to_rfc1918:
             IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
         else:
             IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
 
         IPv6_skipped_networks = IPSet(IPV6_RESERVED_NETWORK_LIST)
+
+        initial_ip_list = [
+            key for key, value in self._dns_dict.items() if value is None
+        ]
+
+        pending_ipset = IPSet(initial_ip_list)
+
+        try:
+            # print(f"{pending_ipset=}")
+            if self._filter_mode == "block":
+                result_ipset = pending_ipset - self._filter
+            elif self._filter_mode == "allow":
+                result_ipset = pending_ipset & self._filter
+
+            # print(f"{result_ipset=}")
+            initial_pending_ips = [str(x) for x in result_ipset]
+        except AttributeError:
+            initial_pending_ips = [str(x) for x in pending_ipset]
 
         pending_ips = list()
 
@@ -320,6 +350,26 @@ class rdns_reaper:
             self._resolver_ip = resolver_ip
         except AddrFormatError:
             raise TypeError
+
+    def set_filter(self, input, **kwargs):
+        if kwargs.get("mode") is None:
+            self._filter_mode = "block"
+        elif kwargs.get("mode").lower() == "allow":
+            self._filter_mode = "allow"
+        elif kwargs.get("mode").lower() == "block":
+            self._filter_mode = "block"
+        else:
+            raise ValueError
+
+        if isinstance(input, str):
+            input = IPSet([input])
+        elif isinstance(input, list):
+            input = IPSet(input)
+
+        if not isinstance(input, IPSet):
+            raise TypeError
+
+        self._filter = input
 
     def values(self):
         """Return the hostnames as values in list format."""

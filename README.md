@@ -4,7 +4,7 @@
 ![PyPI](https://img.shields.io/pypi/v/rdns-reaper)
 ![piwheels](https://img.shields.io/piwheels/v/rdns-reaper)
 
-rdns-reaper: Reverse DNS lookup Engine
+rdns-reaper: Reverse DNS Lookup Engine
 ======================================
 
 rdns-reaper is a multi-threaded lookup engine for Python v3 to resolve DNS names from IP addresses.  IP addresses can be added to the custom class by a calling program individually or in batches, after which point the client triggers the resolver to execute on all IP addresses.  Once the lookup completes, the calling program can retrieve the data in a variety of ways.
