@@ -70,3 +70,13 @@ def test_iterator():
             assert False
 
     assert True
+
+
+def test_filter_1():
+    dns = rdns_reaper()
+    dns += ["10.0.0.1", "10.0.1.2"]
+
+    dns.set_filter("10.0.0.0/24", mode="block")
+    assert dns._build_resolve_list() == ["10.0.1.2"]
+    dns.set_filter("10.0.0.0/24", mode="allow")
+    assert dns._build_resolve_list() == ["10.0.0.1"]
