@@ -57,7 +57,7 @@ class rdns_reaper:
 
     def __init__(self, **kwargs):
         """Initialize class and take in user options.
-        
+
         Keyword Arguments:
             allow_reserved_networks (bool, optional): if True disable automatic filtering of
                 reserved networks, must be set to True if checking of any reserved networks
@@ -69,7 +69,7 @@ class rdns_reaper:
             filtermode ("block" | "allow", optional): sets filter mode to block list or allow list
                 defaults to block list if not specified
             filename (str, optional): path and filename for disk based cache in YAML format
-            filemode ("r" | "w"), required if filename set): read only or read-write mode for 
+            filemode ("r" | "w"), required if filename set): read only or read-write mode for
                 disk cache, if set to write, resolver may try to update the cache periodically
                 the savefile() function can be called without arguments to force an update
             unresolvable (str, optional): string to set for each entry if resolving fails
