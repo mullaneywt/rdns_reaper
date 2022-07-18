@@ -7,6 +7,10 @@ Added option for allow/block list filtering with the .set_filter() method.  The 
 Users should not use the built-in simple RFC1918 filter if they are using this feature.
 This feature will not disable the reserved IP address checking for things like loopback, multicast, documentation, and link-local addresses.
 
+Added docstrings to allow for use of help() and .\_\_doc\_\_ for easier use of the library by third parties.
+
+Changed to the GNU GPL v3.0 license.
+
 ## 0.0.11
 
 Minor bug fixes and code documentation changes.  Significant changes to README file to update documentation on github and PyPI.
