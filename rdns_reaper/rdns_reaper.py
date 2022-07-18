@@ -200,18 +200,18 @@ class rdns_reaper:
         except socket.herror:
             self._dns_dict[ip] = self._unresolvable
 
-    def add_ip(self, ip, hostname=None):
+    def add_ip(self, ip_address, hostname=None):
         """Add an IP to the list with option hostname, skip if exists."""
-        if ip in self._dns_dict.keys():
+        if ip_address in self._dns_dict.keys():
             return True
 
         try:
-            IPAddress(ip)
+            IPAddress(ip_address)
             if hostname is None:
-                self._dns_dict.update({ip: None})
+                self._dns_dict.update({ip_address: None})
             else:
-                self._dns_dict.update({ip: hostname})
-            return ip
+                self._dns_dict.update({ip_address: hostname})
+            return ip_address
         except AddrFormatError as error_case:
             raise TypeError from error_case
 
@@ -277,11 +277,11 @@ class rdns_reaper:
 
     def items(self):
         """Return the IP address and hostnames as k, v pairs in list format."""
-        return self._dns_dict.items()
+        return dict(self._dns_dict.items())
 
     def keys(self):
         """Return the IP address as keys in list format."""
-        return self._dns_dict.keys()
+        return list(self._dns_dict.keys())
 
     def limit_to_rfc1918(self, value):
         """Set the RFC1918 filter."""
@@ -417,7 +417,7 @@ class rdns_reaper:
 
     def values(self):
         """Return the hostnames as values in list format."""
-        return self._dns_dict.values()
+        return list(self._dns_dict.values())
 
     @staticmethod
     def _isrfc1918(address_txt):
