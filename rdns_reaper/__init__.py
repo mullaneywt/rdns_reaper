@@ -1,3 +1,3 @@
 from .rdns_reaper import rdns_reaper
 
-__version__ = "0.0.12.dev2"
+__version__ = "0.0.12.dev5"
