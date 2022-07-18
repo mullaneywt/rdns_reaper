@@ -1,7 +1,9 @@
 import copy
 import socket
 import concurrent.futures
-import yaml
+
+# import yaml
+from ruamel.yaml import YAML
 from netaddr import IPAddress, IPSet, AddrFormatError
 
 IPV4_RESERVED_NETWORK_LIST = [
@@ -260,7 +262,7 @@ class rdns_reaper:
             "filter": self._filter,
             "filtermode": self._filter_mode,
             "filename": self._filename,
-            "filemode": self._filemode
+            "filemode": self._filemode,
         }
         return options_dict
 
@@ -281,8 +283,8 @@ class rdns_reaper:
     def loadfile(self, filename):
         """Load saved data in YAML format."""
         with open(filename) as f_handle:
-            f_data = f_handle.read()
-            self._dns_dict = yaml.safe_load(f_data)
+            yaml = YAML(typ="safe")
+            self._dns_dict = yaml.load(f_handle)
 
     def remove_ip(self, ip):
         """Remove an IP from the list, return false if not found."""
@@ -361,8 +363,9 @@ class rdns_reaper:
             filename = self._filename
 
         with open(filename, "w") as f_handle:
-            f_handle.write("---\n")
-            f_handle.write(yaml.dump(self._dns_dict))
+            yaml = YAML(typ="safe")
+            yaml.default_flow_style = False
+            yaml.dump(self._dns_dict, f_handle)
 
     def setname(self, ip, hostname):
         """Force the hostname of an IP."""
