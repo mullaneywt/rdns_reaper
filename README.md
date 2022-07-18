@@ -63,11 +63,14 @@ one.one.one.one
 The following parameters are supported when an instance of rdns_reaper is created:
 |parameter|type|description|default|
 |-|-|-|-|
+| allow_reserved_networks | boolean | Disables automatic filtering of IPv4/IPv6 reserved networks | False |
 | limit_to_rfc1918 | boolean | Limits checking to only IPv4 RFC1918 address space (IPv6 entirely disabled) | False |
 | concurrent | integer | Number of concurrent resolver threads to use | 5 |
 | unresolvable | string | Value to populate if resolving fails | None |
 | filemode | ["r"\|"w"] | read only or read-write disk cache | None |
 | filename | string | Path and filename for YAML formatted disk cache | None |
+| filter | IPSet, string, list of strings | Sets a custom IP filter | None |
+| filtermode | ["allow"\|"block"] | set the filter mode to an allow list or a block list | None |
 
 Note that entries with None as a value will be reprocessed in subsequent resolver runs, while entries with any other value from the `unresolveable` parameter will not be processed again without manual intervention
 
@@ -85,19 +88,24 @@ Note that entries with None as a value will be reprocessed in subsequent resolve
 ### Supported custom methods
 * add_ip(IP) - adds an IP address (provided as a string)
 * add_ip_list(IP_LIST) - adds IP addresses (provided as a list of strings)
+* allow_reserved_networks() - disable/enable automatic filter of reserved networks
 * clear_all_hostnames() - resets all names to None across entire instance
 * clearname(IP) - resets a name to None
 * get_dict() - returns a dictionary with addresses as keys and names as values
+* get_filter() - returns a tuple with custom filter information or None if not set
+* get_options() - returns a dictionary listing options that have been set
 * keys() - returns a list of all IP addresses in the instance
 * loadfile() - forces a load of the YAML based disk cache
+* limit_to_rfc1918 - disable/enable automatic filtering to only IPv4 RFC1918 networks
 * remove_ip(IP) - removes an IP address (provided as a string)
 * resolve_all() - launches a threaded resolver process
 * resolve_all_serial() - launches a singular serial resolver process
 * savefile() - forces a save of the YAML based disk cache
 * setname(IP, NAME) - forces the name for a value (provided as strings)
+* set_filter(IPSet, [mode=]) - sets a custom filter based on an IPSet, IP network in a string, or a list of strings containing IP networks.  Optional mode argument can be `block` or `allow` to set filtering to a block list or allow list
 * values() - returns a list of all DNS names
 
 License
 -------
 
-This project currently is not licensed for use by third parties and all rights are retained by the creator.  Plans for adoption of a common open source license are in the works.
+This project currently is not licensed for use by third parties, and all rights are retained by the creator.  Plans for adoption of a common open source license are in the works.

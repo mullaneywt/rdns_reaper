@@ -58,10 +58,20 @@ class rdns_reaper:
 
         """Check for custom filtering"""
         if kwargs.get("filter") is not None:
-            if kwargs.get("filter_mode") is not None:
-                self.set_filter(kwargs["filter"], mode=kwargs["filter_mode"])
+            if kwargs.get("filtermode") is not None:
+                self.set_filter(kwargs["filter"], mode=kwargs["filtermode"])
             else:
                 self.set_filter(kwargs["filter"])
+        else:
+            self._filter = None
+            self._filter_mode = None
+
+        """Allow reserved network check"""
+
+        if kwargs.get("allow_reserved_networks") is True:
+            self._allow_reserved_networks = True
+        else:
+            self._allow_reserved_networks = False
 
         """Process parallel lookup concurrency"""
         try:
@@ -205,6 +215,12 @@ class rdns_reaper:
         for ip in ip_list:
             self.add_ip(ip)
 
+    def allow_reserved_networks(self, option):
+        if not isinstance(option, bool):
+            raise TypeError
+
+        self._allow_reserved_networks = option
+
     def clear_all_hostnames(self):
         """Clear all the hostnames from existing entries."""
         new_ip_dict = {ip: None for ip in self._dns_dict}
@@ -234,6 +250,19 @@ class rdns_reaper:
             return (self._filter, self._filter_mode)
         except AttributeError:
             return None
+
+    def get_options(self):
+        """Return info about the various options set by the user"""
+        options_dict = {
+            "allow_reserved_networks": self._allow_reserved_networks,
+            "concurrent": self._concurrent,
+            "limit_to_rfc1918": self._limit_to_rfc1918,
+            "filter": self._filter,
+            "filtermode": self._filter_mode,
+            "filename": self._filename,
+            "filemode": self._filemode
+        }
+        return options_dict
 
     def items(self):
         """Return the IP address and hostnames as k, v pairs in list format."""
@@ -270,10 +299,15 @@ class rdns_reaper:
         """Build list of IP's to perform resolver on, shared by serial and parallel methods."""
         if self._limit_to_rfc1918:
             IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
-        else:
+        elif self._allow_reserved_networks is False:
             IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
+        else:
+            IPv4_skipped_networks = IPSet()
 
-        IPv6_skipped_networks = IPSet(IPV6_RESERVED_NETWORK_LIST)
+        if self._allow_reserved_networks is False:
+            IPv6_skipped_networks = IPSet(IPV6_RESERVED_NETWORK_LIST)
+        else:
+            IPv6_skipped_networks = IPSet()
 
         initial_ip_list = [
             key for key, value in self._dns_dict.items() if value is None
@@ -281,16 +315,13 @@ class rdns_reaper:
 
         pending_ipset = IPSet(initial_ip_list)
 
-        try:
-            # print(f"{pending_ipset=}")
-            if self._filter_mode == "block":
-                result_ipset = pending_ipset - self._filter
-            elif self._filter_mode == "allow":
-                result_ipset = pending_ipset & self._filter
-
-            # print(f"{result_ipset=}")
+        if self._filter_mode == "block":
+            result_ipset = pending_ipset - self._filter
             initial_pending_ips = [str(x) for x in result_ipset]
-        except AttributeError:
+        elif self._filter_mode == "allow":
+            result_ipset = pending_ipset & self._filter
+            initial_pending_ips = [str(x) for x in result_ipset]
+        else:
             initial_pending_ips = [str(x) for x in pending_ipset]
 
         pending_ips = list()
