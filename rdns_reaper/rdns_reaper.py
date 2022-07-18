@@ -95,12 +95,9 @@ class rdns_reaper:
                 self.set_filter(kwargs["filter"], mode=kwargs["filtermode"])
             else:
                 self.set_filter(kwargs["filter"])
-        # else:
-        #     self._filter = None
-        #     self._filter_mode = None
+
 
         """Allow reserved network check"""
-
         if kwargs.get("allow_reserved_networks"):
             self._allow_reserved_networks = True
         else:
@@ -288,10 +285,29 @@ class rdns_reaper:
 
         self._allow_reserved_networks = option
 
+    def allow_reserved_networks(self, option):
+        """Allow users to enable/disable automatic filtering of reserved networks.
+
+        If a user wants to check reserved network IPs (loopbacks, link local, multicast, etc.)
+        they must set this option to True.  Users may manually filter some of the reserved
+        networks with the filter() option.  This option *must* be set to True to resolve any
+        reserved networks.  Using an allow filter with this option set to False will not resolve
+        any reserved networks.
+
+        Args:
+            option (bool): Set to True to disable automatic filtering of reserved networks
+
+        """
+        if not isinstance(option, bool):
+            raise TypeError
+
+        self._allow_reserved_networks = option
+
     def clear_all_hostnames(self):
         """Clear all the hostnames from existing entries."""
         new_ip_dict = {ip: None for ip in self._dns_dict}
         self._dns_dict = new_ip_dict
+
 
     def clearname(self, ip_address):
         """Clear a specific IP's hostname.
@@ -369,6 +385,7 @@ class rdns_reaper:
         Args
             filename (str): path and filename for the disk based YAML cache file
         """
+
         with open(filename, encoding="UTF-8") as f_handle:
             f_data = f_handle.read()
             self._dns_dict = yaml.safe_load(f_data)
@@ -503,10 +520,12 @@ class rdns_reaper:
         """
         if kwargs.get("mode") is None:
             self._filter_mode = "block"
+
         elif kwargs.get("mode").lower() in ("allow", "block"):
             self._filter_mode = kwargs.get("mode").lower()
         # elif kwargs.get("mode").lower() == "block":
         # self._filter_mode = "block"
+
         else:
             raise ValueError
 
