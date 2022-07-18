@@ -93,6 +93,7 @@ Note that entries with None as a value will be reprocessed in subsequent resolve
 * clearname(IP) - resets a name to None
 * get_dict() - returns a dictionary with addresses as keys and names as values
 * get_filter() - returns a tuple with custom filter information or None if not set
+* get_options() - returns a dictionary listing options that have been set
 * keys() - returns a list of all IP addresses in the instance
 * loadfile() - forces a load of the YAML based disk cache
 * limit_to_rfc1918 - disable/enable automatic filtering to only IPv4 RFC1918 networks

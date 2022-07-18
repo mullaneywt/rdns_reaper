@@ -62,6 +62,9 @@ class rdns_reaper:
                 self.set_filter(kwargs["filter"], mode=kwargs["filtermode"])
             else:
                 self.set_filter(kwargs["filter"])
+        else:
+            self._filter = None
+            self._filter_mode = None
 
         """Allow reserved network check"""
 
@@ -248,6 +251,19 @@ class rdns_reaper:
         except AttributeError:
             return None
 
+    def get_options(self):
+        """Return info about the various options set by the user"""
+        options_dict = {
+            "allow_reserved_networks": self._allow_reserved_networks,
+            "concurrent": self._concurrent,
+            "limit_to_rfc1918": self._limit_to_rfc1918,
+            "filter": self._filter,
+            "filtermode": self._filter_mode,
+            "filename": self._filename,
+            "filemode": self._filemode
+        }
+        return options_dict
+
     def items(self):
         """Return the IP address and hostnames as k, v pairs in list format."""
         return {ip: hostname for ip, hostname in self._dns_dict.items()}.items()
@@ -299,16 +315,13 @@ class rdns_reaper:
 
         pending_ipset = IPSet(initial_ip_list)
 
-        try:
-            # print(f"{pending_ipset=}")
-            if self._filter_mode == "block":
-                result_ipset = pending_ipset - self._filter
-            elif self._filter_mode == "allow":
-                result_ipset = pending_ipset & self._filter
-
-            # print(f"{result_ipset=}")
+        if self._filter_mode == "block":
+            result_ipset = pending_ipset - self._filter
             initial_pending_ips = [str(x) for x in result_ipset]
-        except AttributeError:
+        elif self._filter_mode == "allow":
+            result_ipset = pending_ipset & self._filter
+            initial_pending_ips = [str(x) for x in result_ipset]
+        else:
             initial_pending_ips = [str(x) for x in pending_ipset]
 
         pending_ips = list()
