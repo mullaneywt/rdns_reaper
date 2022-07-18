@@ -108,4 +108,4 @@ Note that entries with None as a value will be reprocessed in subsequent resolve
 License
 -------
 
-This project currently is not licensed for use by third parties, and all rights are retained by the creator.  Plans for adoption of a common open source license are in the works.
+Licensed under GNU GPL V3.0.  See the LICENSE file for more information.
