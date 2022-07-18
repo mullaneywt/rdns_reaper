@@ -63,6 +63,13 @@ class rdns_reaper:
             else:
                 self.set_filter(kwargs["filter"])
 
+        """Allow reserved network check"""
+
+        if kwargs.get("allow_reserved_networks") is True:
+            self._allow_reserved_networks = True
+        else:
+            self._allow_reserved_networks = False
+
         """Process parallel lookup concurrency"""
         try:
             if type(kwargs["concurrent"]) is int:
@@ -205,6 +212,12 @@ class rdns_reaper:
         for ip in ip_list:
             self.add_ip(ip)
 
+    def allow_reserved_networks(self, option):
+        if not isinstance(option, bool):
+            raise TypeError
+
+        self._allow_reserved_networks = option
+
     def clear_all_hostnames(self):
         """Clear all the hostnames from existing entries."""
         new_ip_dict = {ip: None for ip in self._dns_dict}
@@ -270,10 +283,15 @@ class rdns_reaper:
         """Build list of IP's to perform resolver on, shared by serial and parallel methods."""
         if self._limit_to_rfc1918:
             IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
-        else:
+        elif self._allow_reserved_networks is False:
             IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
+        else:
+            IPv4_skipped_networks = IPSet()
 
-        IPv6_skipped_networks = IPSet(IPV6_RESERVED_NETWORK_LIST)
+        if self._allow_reserved_networks is False:
+            IPv6_skipped_networks = IPSet(IPV6_RESERVED_NETWORK_LIST)
+        else:
+            IPv6_skipped_networks = IPSet()
 
         initial_ip_list = [
             key for key, value in self._dns_dict.items() if value is None

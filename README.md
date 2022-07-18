@@ -63,6 +63,7 @@ one.one.one.one
 The following parameters are supported when an instance of rdns_reaper is created:
 |parameter|type|description|default|
 |-|-|-|-|
+| allow_reserved_networks | boolean | Disables automatic filtering of IPv4/IPv6 reserved networks | False |
 | limit_to_rfc1918 | boolean | Limits checking to only IPv4 RFC1918 address space (IPv6 entirely disabled) | False |
 | concurrent | integer | Number of concurrent resolver threads to use | 5 |
 | unresolvable | string | Value to populate if resolving fails | None |
@@ -87,12 +88,14 @@ Note that entries with None as a value will be reprocessed in subsequent resolve
 ### Supported custom methods
 * add_ip(IP) - adds an IP address (provided as a string)
 * add_ip_list(IP_LIST) - adds IP addresses (provided as a list of strings)
+* allow_reserved_networks() - disable/enable automatic filter of reserved networks
 * clear_all_hostnames() - resets all names to None across entire instance
 * clearname(IP) - resets a name to None
 * get_dict() - returns a dictionary with addresses as keys and names as values
 * get_filter() - returns a tuple with custom filter information or None if not set
 * keys() - returns a list of all IP addresses in the instance
 * loadfile() - forces a load of the YAML based disk cache
+* limit_to_rfc1918 - disable/enable automatic filtering to only IPv4 RFC1918 networks
 * remove_ip(IP) - removes an IP address (provided as a string)
 * resolve_all() - launches a threaded resolver process
 * resolve_all_serial() - launches a singular serial resolver process
