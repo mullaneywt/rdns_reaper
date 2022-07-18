@@ -56,7 +56,28 @@ class rdns_reaper:
     _filter = None
 
     def __init__(self, **kwargs):
-        """Initialize class and take in user options."""
+        """Initialize class and take in user options.
+        
+        Keyword Arguments:
+            allow_reserved_networks (bool, optional): if True disable automatic filtering of
+                reserved networks, must be set to True if checking of any reserved networks
+                is desired.  Can then be supplemented with a custom filter
+            concurrent (int, default = 5): number of concurrent resolver threads
+            limit_to_rfc1918 (bool, optional): limit resolve to IPv4 RFC1918 only
+            filter (str, list of strs, IPSet, optional): filter data
+                can be a string containing an IP Address, list of strings, or an IPSet object
+            filtermode ("block" | "allow", optional): sets filter mode to block list or allow list
+                defaults to block list if not specified
+            filename (str, optional): path and filename for disk based cache in YAML format
+            filemode ("r" | "w"), required if filename set): read only or read-write mode for 
+                disk cache, if set to write, resolver may try to update the cache periodically
+                the savefile() function can be called without arguments to force an update
+            unresolvable (str, optional): string to set for each entry if resolving fails
+                None is the default, all other options prevent subsequent lookups if disk based
+                cache is in use
+
+
+        """
         self._dns_dict = {}
         self._resolver_ip = None
 
@@ -139,7 +160,15 @@ class rdns_reaper:
         return self_copy
 
     def __contains__(self, ip_address):
-        """Allow for checking of IP in the instance."""
+        """Allow for checking of IP in the instance.
+
+        Args:
+            ip_address (str): A string containing an IP address to check
+
+        Returns:
+            bool: True if found, false if not found
+
+        """
         if ip_address in self._dns_dict.keys():
             return True
         return False
@@ -251,7 +280,7 @@ class rdns_reaper:
         any reserved networks.
 
         Args:
-            option (bool) - Set to True to disable automatic filtering of reserved networks
+            option (bool): Set to True to disable automatic filtering of reserved networks
 
         """
         if not isinstance(option, bool):
@@ -268,7 +297,7 @@ class rdns_reaper:
         """Clear a specific IP's hostname.
 
         Args:
-            ip (str) - A string containing an IP address
+            ip (str): A string containing an IP address
         """
         try:
             ip = IPAddress(ip)
@@ -288,7 +317,14 @@ class rdns_reaper:
         return self._dns_dict
 
     def get_filter(self):
-        """Return current filter status."""
+        """Return current filter status.
+
+        Returns:
+            tuple - (filter, filter_mode)
+                filter is an IPSet object containing all networks that are part of the filter
+                filter_mode is a string of "block" or "allow" to indicate the filtering mode
+                    as a block list or allow list
+        """
         try:
             return (self._filter, self._filter_mode)
         except AttributeError:
@@ -319,7 +355,7 @@ class rdns_reaper:
         """Set the RFC1918 filter.
 
         Args:
-            option (bool) - True limits the resolver to only IPv4 RFC1918 networks
+            option (bool): True limits the resolver to only IPv4 RFC1918 networks
 
         IPv6 resolving is effecitvely disabled when this option is set to True
         """
@@ -329,8 +365,9 @@ class rdns_reaper:
 
     def loadfile(self, filename):
         """Load saved data in YAML format.
+
         Args
-            filename (str) - path and filename for the disk based YAML cache file
+            filename (str): path and filename for the disk based YAML cache file
         """
         with open(filename) as f_handle:
             f_data = f_handle.read()
@@ -340,7 +377,7 @@ class rdns_reaper:
         """Remove an IP from the list, return false if not found.
 
         Args:
-            ip (str) - A string containing an IP Address to remove
+            ip (str): A string containing an IP Address to remove
         """
         try:
             IPAddress(ip)
@@ -430,8 +467,8 @@ class rdns_reaper:
         """Force the hostname of an IP.
 
         Args:
-            ip_address (str) - String containing an IP address to be modified
-            hostname (str) - Desired FQDN hostname to be set for this entry
+            ip_address (str): String containing an IP address to be modified
+            hostname (str): Desired FQDN hostname to be set for this entry
                 Can be None to reset record to allow for subsequent lookup
         """
         try:
@@ -455,11 +492,11 @@ class rdns_reaper:
         """Set customer filter options.
 
         Args:
-            filter_input (str, list, IPSet) - custom filter data
+            filter_input (str, list of strings, IPSet) - custom filter data
                 Data can be a single string containing an IP network, a list of strings
                 containing IP networks, or an IPSet containing networks
 
-            mode=("block" | "allow") - named argument for a block list or allow list
+            mode=("block" | "allow", optional) - named argument for a block list or allow list
                 a block list will allow anything not specified in the filter data
                 an allow list permits only what is specified in the filter data
                 the default option is a block list if no mode is specified
