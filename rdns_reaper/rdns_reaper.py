@@ -201,7 +201,20 @@ class rdns_reaper:
             self._dns_dict[ip] = self._unresolvable
 
     def add_ip(self, ip_address, hostname=None):
-        """Add an IP to the list with option hostname, skip if exists."""
+        """Add an IP to the list with option hostname, skip if exists.
+
+        Args:
+            ip_address (str): A string containing an IP address in v4 or v6 format
+            hostname (str): Optional string with a hostname
+                Without this argument, the Hostname will be set to None and will be eligible
+                for automatic lookup when the resolver functions are called
+                The hostname string should be a FQDN or similar text that would be returned
+                by a true DNS based reverseloopkup.
+
+        Returns:
+            True if already in dictionary, otherwise returns the key string back on success.
+
+        """
         if ip_address in self._dns_dict.keys():
             return True
 
@@ -216,7 +229,11 @@ class rdns_reaper:
             raise TypeError from error_case
 
     def add_ip_list(self, ip_list):
-        """Add all new IP's from a list."""
+        """Add all new IP's from a list.
+
+        Args:
+            ip_address (list): A list of strings each containing an IP address in v4 or v6 format
+        """
         if isinstance(ip_list, set):
             ip_list = list(ip_list)
         if not isinstance(ip_list, list):
@@ -225,7 +242,18 @@ class rdns_reaper:
             self.add_ip(ip)
 
     def allow_reserved_networks(self, option):
-        """Allow users to enable/disable automatic filtering of reserved networks."""
+        """Allow users to enable/disable automatic filtering of reserved networks.
+
+        If a user wants to check reserved network IPs (loopbacks, link local, multicast, etc.)
+        they must set this option to True.  Users may manually filter some of the reserved
+        networks with the filter() option.  This option *must* be set to True to resolve any
+        reserved networks.  Using an allow filter with this option set to False will not resolve
+        any reserved networks.
+
+        Args:
+            option (bool) - Set to True to disable automatic filtering of reserved networks
+
+        """
         if not isinstance(option, bool):
             raise TypeError
 
@@ -237,7 +265,11 @@ class rdns_reaper:
         self._dns_dict = new_ip_dict
 
     def clearname(self, ip):
-        """Clear a specific IP's hostname."""
+        """Clear a specific IP's hostname.
+
+        Args:
+            ip (str) - A string containing an IP address
+        """
         try:
             ip = IPAddress(ip)
             self._dns_dict[ip] = None
@@ -283,20 +315,33 @@ class rdns_reaper:
         """Return the IP address as keys in list format."""
         return list(self._dns_dict.keys())
 
-    def limit_to_rfc1918(self, value):
-        """Set the RFC1918 filter."""
-        if not isinstance(value, bool):
+    def limit_to_rfc1918(self, option):
+        """Set the RFC1918 filter.
+
+        Args:
+            option (bool) - True limits the resolver to only IPv4 RFC1918 networks
+
+        IPv6 resolving is effecitvely disabled when this option is set to True
+        """
+        if not isinstance(option, bool):
             raise TypeError
-        self._limit_to_rfc1918 = value
+        self._limit_to_rfc1918 = option
 
     def loadfile(self, filename):
-        """Load saved data in YAML format."""
+        """Load saved data in YAML format.
+        Args
+            filename (str) - path and filename for the disk based YAML cache file
+        """
         with open(filename) as f_handle:
             f_data = f_handle.read()
             self._dns_dict = yaml.safe_load(f_data)
 
     def remove_ip(self, ip):
-        """Remove an IP from the list, return false if not found."""
+        """Remove an IP from the list, return false if not found.
+
+        Args:
+            ip (str) - A string containing an IP Address to remove
+        """
         try:
             IPAddress(ip)
             self._dns_dict.pop(ip)
@@ -367,7 +412,13 @@ class rdns_reaper:
             self._resolve_function(address)
 
     def savefile(self, filename=None):
-        """Save internal dictionary to YAML file."""
+        """Save internal dictionary to YAML file.
+
+        Args:
+            filename (str): Optional path and filename for disk based YAML cache file.
+                If not specified, the filename set at instance creation is used
+                If neither are specified, the operation will fail
+        """
         if filename is None and self._filename is not None and self._filemode == "w":
             filename = self._filename
 
@@ -376,7 +427,13 @@ class rdns_reaper:
             f_handle.write(yaml.dump(self._dns_dict))
 
     def setname(self, ip_address, hostname):
-        """Force the hostname of an IP."""
+        """Force the hostname of an IP.
+
+        Args:
+            ip_address (str) - String containing an IP address to be modified
+            hostname (str) - Desired FQDN hostname to be set for this entry
+                Can be None to reset record to allow for subsequent lookup
+        """
         try:
             ip_address = IPAddress(ip_address)
             self._dns_dict[ip_address] = hostname
@@ -395,7 +452,18 @@ class rdns_reaper:
             raise TypeError from error_case
 
     def set_filter(self, filter_input, **kwargs):
-        """Set customer filter options."""
+        """Set customer filter options.
+
+        Args:
+            filter_input (str, list, IPSet) - custom filter data
+                Data can be a single string containing an IP network, a list of strings
+                containing IP networks, or an IPSet containing networks
+
+            mode=("block" | "allow") - named argument for a block list or allow list
+                a block list will allow anything not specified in the filter data
+                an allow list permits only what is specified in the filter data
+                the default option is a block list if no mode is specified
+        """
         if kwargs.get("mode") is None:
             self._filter_mode = "block"
         elif kwargs.get("mode").lower() == "allow":
