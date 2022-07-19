@@ -101,7 +101,7 @@ Note that entries with None as a value will be reprocessed in subsequent resolve
 * resolve_all() - launches a threaded resolver process
 * resolve_all_serial() - launches a singular serial resolver process
 * savefile() - forces a save of the YAML based disk cache
-* setname(IP, NAME) - forces the name for a value (provided as strings)
+* set_name(IP, NAME) - forces the name for a value (provided as strings)
 * set_filter(IPSet, [mode=]) - sets a custom filter based on an IPSet, IP network in a string, or a list of strings containing IP networks.  Optional mode argument can be `block` or `allow` to set filtering to a block list or allow list
 * values() - returns a list of all DNS names
 
