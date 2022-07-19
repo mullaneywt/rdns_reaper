@@ -43,15 +43,45 @@ IPV6_RESERVED_NETWORK_LIST = [
 
 
 class rdns_reaper:
+<<<<<<< HEAD
+    """Reverse DNS Lookup Engine."""
+
+    _concurrent = 5
+    _filter = None
+    _filter_mode = None
+=======
+>>>>>>> eedcba2 (Refactoring)
+
     """Reverse DNS Lookup Engine."""
 
     _concurrent = 5
     _filter = None
     _filter_mode = None
 
-    def __init__(self, *args, **kwargs):
-        """Initialize class and take in user options."""
-        self._dns_dict = dict()
+    def __init__(self, **kwargs):
+        """Initialize class and take in user options.
+
+        Keyword Arguments:
+            allow_reserved_networks (bool, optional): if True disable automatic filtering of
+                reserved networks, must be set to True if checking of any reserved networks
+                is desired.  Can then be supplemented with a custom filter
+            concurrent (int, default = 5): number of concurrent resolver threads
+            limit_to_rfc1918 (bool, optional): limit resolve to IPv4 RFC1918 only
+            filter (str, list of strs, IPSet, optional): filter data
+                can be a string containing an IP Address, list of strings, or an IPSet object
+            filtermode ("block" | "allow", optional): sets filter mode to block list or allow list
+                defaults to block list if not specified
+            filename (str, optional): path and filename for disk based cache in YAML format
+            filemode ("r" | "w"), required if filename set): read only or read-write mode for
+                disk cache, if set to write, resolver may try to update the cache periodically
+                the savefile() function can be called without arguments to force an update
+            unresolvable (str, optional): string to set for each entry if resolving fails
+                None is the default, all other options prevent subsequent lookups if disk based
+                cache is in use
+
+
+        """
+        self._dns_dict = {}
         self._resolver_ip = None
 
         """Check for RFC1918 filtering"""
@@ -66,9 +96,18 @@ class rdns_reaper:
                 self.set_filter(kwargs["filter"], mode=kwargs["filtermode"])
             else:
                 self.set_filter(kwargs["filter"])
+<<<<<<< HEAD
 
 
         """Allow reserved network check"""
+=======
+        # else:
+        #     self._filter = None
+        #     self._filter_mode = None
+
+        """Allow reserved network check"""
+
+>>>>>>> eedcba2 (Refactoring)
         if kwargs.get("allow_reserved_networks"):
             self._allow_reserved_networks = True
         else:
@@ -190,9 +229,12 @@ class rdns_reaper:
             self._dns_dict[ip_address] = name
         except socket.herror:
             self._dns_dict[ip_address] = self._unresolvable
+<<<<<<< HEAD
 
     def add(self, *args, **kwargs):
         self.__iadd__(*args, **kwargs)
+=======
+>>>>>>> eedcba2 (Refactoring)
 
     def add(self, *args, **kwargs):
         self.__iadd__(*args, **kwargs)
@@ -219,6 +261,7 @@ class rdns_reaper:
             raise TypeError
         for ip_address in ip_list:
             self.add_ip(ip_address)
+<<<<<<< HEAD
 
     def allow_reserved_networks(self, option):
         """Allow users to enable/disable automatic filtering of reserved networks.
@@ -237,6 +280,8 @@ class rdns_reaper:
             raise TypeError
 
         self._allow_reserved_networks = option
+=======
+>>>>>>> eedcba2 (Refactoring)
 
     def allow_reserved_networks(self, option):
         if not isinstance(option, bool):
@@ -249,6 +294,10 @@ class rdns_reaper:
         new_ip_dict = {ip: None for ip in self._dns_dict}
         self._dns_dict = new_ip_dict
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> eedcba2 (Refactoring)
     def clearname(self, ip_address):
         """Clear a specific IP's hostname.
 
@@ -312,7 +361,10 @@ class rdns_reaper:
         Args
             filename (str): path and filename for the disk based YAML cache file
         """
+<<<<<<< HEAD
 
+=======
+>>>>>>> eedcba2 (Refactoring)
         with open(filename, encoding="UTF-8") as f_handle:
             f_data = f_handle.read()
             self._dns_dict = yaml.safe_load(f_data)
@@ -429,12 +481,8 @@ class rdns_reaper:
     def set_filter(self, input, **kwargs):
         if kwargs.get("mode") is None:
             self._filter_mode = "block"
-
         elif kwargs.get("mode").lower() in ("allow", "block"):
             self._filter_mode = kwargs.get("mode").lower()
-        # elif kwargs.get("mode").lower() == "block":
-        # self._filter_mode = "block"
-
         else:
             raise ValueError
 
