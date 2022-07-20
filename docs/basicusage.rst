@@ -23,7 +23,7 @@ Prepare your addresses to be resolved.  This can be a single string with a singl
 
 >>> ips_to_resolve = ["1.1.1.1", "8.8.8.8"]
 
-The `add()` function should be able to detect and handle any format.  You can also use the + or += operators to add items, or to add two rdns_reaper instances together.  The `resolve_all()` function will start a parallel resolver and attempt to get the names for all addresses, with 5 threads by default.
+The `add()` function should be able to detect and handle any supported format.  You can also use the + or += operators to add items, or to add two rdns_reaper instances together.  The `resolve_all()` function will start a parallel resolver and attempt to get the names for all addresses, with 5 threads by default.
 
 >>> dns.add(ips_to_resolve)
 >>> dns.resolve_all()
