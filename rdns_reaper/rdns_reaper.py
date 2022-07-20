@@ -263,7 +263,7 @@ class rdns_reaper:
             "filter": self._filter,
             "filtermode": self._filter_mode,
             "filename": self._filename,
-            "filemode": self._filemode
+            "filemode": self._filemode,
         }
         return options_dict
 
