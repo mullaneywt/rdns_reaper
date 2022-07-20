@@ -1,12 +1,12 @@
 import setuptools
 
-with open("README.rst", "r", encoding="utf-8") as fh:
+with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 
 setuptools.setup(
     name='rdns_reaper',
-    version='0.0.12.dev2',
+    version='0.0.13.dev1',
     author='Will Mullaney',
     author_email='rdns-reaper@mullaneywt.anonaddy.com',
     description='Reverse DNS lookup engine',
