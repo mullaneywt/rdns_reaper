@@ -192,6 +192,9 @@ class rdns_reaper:
         except socket.herror:
             self._dns_dict[ip] = self._unresolvable
 
+    def add(self, *args, **kwargs):
+        self.__iadd__(*args, **kwargs)
+
     def add_ip(self, ip, hostname=None):
         """Add an IP to the list with option hostname, skip if exists."""
         if ip in self._dns_dict.keys():
