@@ -13,6 +13,11 @@ The library currently runs on IPv4 addresses and IPv6 address.  Entries can be c
 
 rdns-reaper is currently tested with Python 3.6-3.11
 
+Documentation
+-------------
+
+Read our documentation at https://rdns-reaper.readthedocs.io/en/latest/
+
 
 Installation and Usage
 ----------------------
