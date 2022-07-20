@@ -12,6 +12,18 @@ The library currently runs on IPv4 addresses and IPv6 address.  Entries can be c
 
 rdns-reaper is currently tested with Python 3.6-3.11
 
+Important URLs:
+---------------
+
+* Bug Tracker: `https://github.com/mullaneywt/rdns_reaper/issues <https://github.com/mullaneywt/rdns_reaper/issues>`_
+* Documentation: `https://rdns-reaper.readthedocs.io/en/latest/ <https://rdns-reaper.readthedocs.io/en/latest/>`_
+* Source Code: `http://github.com/mullaneywt/rdns_reaper <http://github.com/mullaneywt/rdns_reaper>`_
+* PyPI: `https://pypi.org/project/rdns-reaper/ <https://pypi.org/project/rdns-reaper/>`_
+
+
+Navigation
+----------
+
 
 .. toctree::
    :maxdepth: 2
@@ -21,17 +33,11 @@ rdns-reaper is currently tested with Python 3.6-3.11
    basicusage
    supported
 
-
+* :ref:`genindex`
+* :ref:`search`
 
 
 License
 -------
 
 Licensed under the GNU GPL v3.0
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`search`
