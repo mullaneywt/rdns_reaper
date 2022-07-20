@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name='rdns_reaper',
-    version='0.0.13.dev1',
+    version='0.0.12.post1',
     author='Will Mullaney',
     author_email='rdns-reaper@mullaneywt.anonaddy.com',
     description='Reverse DNS lookup engine',
@@ -16,9 +16,11 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=['rdns_reaper'],
-    python_requires='>=3.6,<=3.11',
+    python_requires='>=3.6',
     project_urls={
-        "Bug Tracker": "https://github.com/mullaneywt/rdns_reaper/issues"
+        "Bug Tracker": "https://github.com/mullaneywt/rdns_reaper/issues",
+        "Source": "https://github.com/mullaneywt/rdns_reaper/",
+        "Documentation": "https://rdns-reaper.readthedocs.io/"
     },
     url='https://github.com/mullaneywt/rdns_reaper'
 )
