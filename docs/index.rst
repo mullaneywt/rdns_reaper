@@ -24,6 +24,7 @@ Important URLs:
 Navigation
 ----------
 
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
@@ -31,8 +32,6 @@ Navigation
    install
    basicusage
    supported
-
-Indices and tables:
 
 * :ref:`genindex`
 * :ref:`search`
@@ -42,5 +41,3 @@ License
 -------
 
 Licensed under the GNU GPL v3.0
-
-
