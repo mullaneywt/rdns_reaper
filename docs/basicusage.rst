@@ -19,7 +19,7 @@ Create an instance of the class
 
 >>> dns = rdns_reaper()
 
-Prepare your addresses to be resolved.  This can be a single string with a single address, a list of strings each containing a single address, or an IPSet containing multiple addresses.  If using an IPSet, make sure you pass a /32 or /128 address, not a network
+Prepare your addresses to be resolved.  This can be a single string with a single address, a list of strings each containing a single address, or an IPSet containing multiple addresses.  If using an IPSet, make sure you pass a /32 or /128 address, not a network.
 
 >>> ips_to_resolve = ["1.1.1.1", "8.8.8.8"]
 
@@ -28,16 +28,70 @@ The `add()` function should be able to detect and handle any format.  You can al
 >>> dns.add(ips_to_resolve)
 >>> dns.resolve_all()
 
-You can get an individual item by address from the resolver
+You can get an individual item by address from the resolver.
 
 >>> print(dns["1.1.1.1"])
 
-Or you can iterate over the resolver to get a tuple for each item
+Or you can iterate over the resolver to get a tuple for each item.
 
 >>> for address, name in dns:
 >>>     print(f"{address} is called {name}")
 
 Output:
 
-1.1.1.1 is called one.one.one.one
-8.8.8.8 is called dns.google
+>>> 1.1.1.1 is called one.one.one.one
+>>> 8.8.8.8 is called dns.google
+
+
+Limit to RFC1918
+----------------
+
+If you are using IPv4 exclusively and want to check only internal RFC1918 addresses, you can add a `limit_to_rfc1918` keyword argument to limit your lookup queries.  Any address passed to the module that is IPv6 or IPv4 outside of RFC1918 is silently discarded.
+
+>>> dns = rdns_reaper(limit_to_rfc1918=True)
+>>> ips_to_resolve = ["1.1.1.1", "8.8.8.8", "10.0.0.1"]
+>>> dns.add(ips_to_resolve)
+>>> dns.resolve_all()
+>>> print(dns.items())
+>>> for address, name in dns:
+>>>     print(f"{address} is called {name}")
+
+Output
+
+>>> 1.1.1.1 is called None
+>>> 8.8.8.8 is called None
+>>> 10.0.0.0 is called host1.myhost.example.com
+
+Override automatic filtering
+----------------------------
+
+Reserved networks in the IPv4 and IPv6 address space are automatically skipped by default.  This includes things like loopback space, documentation addresses, multicast addresses, etc.
+
+If you want to search in this area, pass the `allow_reserved_networks` keyword argument
+
+>>> dns = rdns_reaper(allow_reserved_networks=True)
+>>> dns.add("225.0.0.1")
+>>> dns.resolve_all()
+>>> dns["225.0.0.1"]
+
+Output
+
+>>> multicastgroup1.example.com
+
+
+Custom filtering
+----------------
+
+You can define a custom filter as an allowlist or a blocklist.  The filter can mix both IPv4 and IPv6 addressing together.  This filter will not work correctly if the `limit_rfc_1918` option is set to True, unless you are only using filtering inside the RFC1918 space.  If you want to allow reserved networks while also using a custom filter, you'll need to enable the `allow_reserved_networks` feature while also using the filter
+
+Example allowing searching of only the 10/8 and 172.16/12 RFC1918 spaces.
+
+>>> filter_data = ["10.0.0.0/8", "172.16.0.0/12"]
+>>> dns = rdns_reaper(filter=filterdata, filtermode="allow")
+
+Example preventing searching the RFC1918 space
+
+>>> filter_data = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+>>> dns = rdns_reaper(filter=filterdata, filtermode="block")
+
+If `filtermode` is not specified then the default is a blocklist.
