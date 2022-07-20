@@ -20,7 +20,6 @@ rdns-reaper is currently tested with Python 3.6-3.11
    install
    basicusage
    supported
-   rdns_reaper
 
 
 
