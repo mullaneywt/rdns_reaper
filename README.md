@@ -3,6 +3,7 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/rdns-reaper)
 ![PyPI](https://img.shields.io/pypi/v/rdns-reaper)
 ![piwheels](https://img.shields.io/piwheels/v/rdns-reaper)
+![Read the Docs](https://img.shields.io/readthedocs/rdns_reaper)
 
 rdns-reaper: Reverse DNS Lookup Engine
 ======================================
