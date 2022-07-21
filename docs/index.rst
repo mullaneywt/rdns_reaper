@@ -12,6 +12,7 @@ The library currently runs on IPv4 addresses and IPv6 address.  Entries can be c
 
 rdns-reaper is currently tested with Python 3.6-3.11
 
+
 Important URLs:
 ---------------
 
@@ -33,6 +34,10 @@ Navigation
    basicusage
    supported
 
+
+Indices and tables
+------------------
+
 * :ref:`genindex`
 * :ref:`search`
 
@@ -41,3 +46,6 @@ License
 -------
 
 Licensed under the GNU GPL v3.0
+
+
+
