@@ -87,18 +87,8 @@ class rdns_reaper:
                 self.set_filter(kwargs["filter"], mode=kwargs["filtermode"])
             else:
                 self.set_filter(kwargs["filter"])
-<<<<<<< HEAD
-
 
         """Allow reserved network check"""
-=======
-        # else:
-        #     self._filter = None
-        #     self._filter_mode = None
-
-        """Allow reserved network check"""
-
->>>>>>> eedcba2 (Refactoring)
         if kwargs.get("allow_reserved_networks"):
             self._allow_reserved_networks = True
         else:
@@ -220,12 +210,6 @@ class rdns_reaper:
             self._dns_dict[ip_address] = name
         except socket.herror:
             self._dns_dict[ip_address] = self._unresolvable
-<<<<<<< HEAD
-
-    def add(self, *args, **kwargs):
-        self.__iadd__(*args, **kwargs)
-=======
->>>>>>> eedcba2 (Refactoring)
 
     def add(self, *args, **kwargs):
         self.__iadd__(*args, **kwargs)
@@ -252,7 +236,6 @@ class rdns_reaper:
             raise TypeError
         for ip_address in ip_list:
             self.add_ip(ip_address)
-<<<<<<< HEAD
 
     def allow_reserved_networks(self, option):
         """Allow users to enable/disable automatic filtering of reserved networks.
@@ -271,8 +254,6 @@ class rdns_reaper:
             raise TypeError
 
         self._allow_reserved_networks = option
-=======
->>>>>>> eedcba2 (Refactoring)
 
     def allow_reserved_networks(self, option):
         if not isinstance(option, bool):
@@ -285,10 +266,6 @@ class rdns_reaper:
         new_ip_dict = {ip: None for ip in self._dns_dict}
         self._dns_dict = new_ip_dict
 
-<<<<<<< HEAD
-=======
-
->>>>>>> eedcba2 (Refactoring)
     def clearname(self, ip_address):
         """Clear a specific IP's hostname.
 
@@ -352,11 +329,6 @@ class rdns_reaper:
         Args
             filename (str): path and filename for the disk based YAML cache file
         """
-<<<<<<< HEAD
-
-=======
->>>>>>> eedcba2 (Refactoring)
-        with open(filename, encoding="UTF-8") as f_handle:
             f_data = f_handle.read()
             self._dns_dict = yaml.safe_load(f_data)
 
