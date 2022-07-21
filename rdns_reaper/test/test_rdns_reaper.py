@@ -1,4 +1,4 @@
-import pytest
+# import pytest
 from rdns_reaper import rdns_reaper
 from netaddr import IPAddress, IPNetwork, IPSet
 
@@ -41,11 +41,13 @@ def test_add_w_ip():
     dns1.add("10.0.0.1")
     assert "10.0.0.1" in dns1
 
+
 def test_add_w_list():
     dns1 = rdns_reaper()
     dns1.add(["10.0.0.1", "10.0.0.2"])
     assert "10.0.0.1" in dns1
     assert "10.0.0.2" in dns1
+
 
 # def test_add_w_ipset():
 #     dns1 = rdns_reaper()
@@ -53,6 +55,7 @@ def test_add_w_list():
 #     dns1.add(ips)
 #     assert "10.0.0.1" in dns1
 #     assert "10.0.0.2" in dns1
+
 
 def test_add_ip():
     dns1 = rdns_reaper()

@@ -45,8 +45,6 @@ IPV6_RESERVED_NETWORK_LIST = [
 class rdns_reaper:
     """Reverse DNS Lookup Engine."""
 
-
-
     def __init__(self, **kwargs):
         """Initialize class and take in user options.
 
@@ -148,11 +146,11 @@ class rdns_reaper:
         self_copy = copy.deepcopy(self)
         if isinstance(new, rdns_reaper):
             self_copy._dns_dict.update(new._dns_dict)
-        elif type(new) is str:
+        elif isinstance(new, str):
             self_copy.add_ip(new)
-        elif type(new) is set:
+        elif isinstance(new, set):
             self_copy.add_ip_list(new)
-        elif type(new) is list:
+        elif isinstance(new, list):
             self_copy.add_ip_list(new)
         else:
             raise TypeError
@@ -223,6 +221,7 @@ class rdns_reaper:
             self._dns_dict[ip_address] = self._unresolvable
 
     def add(self, *args, **kwargs):
+        """Generalized function for adding."""
         self.__iadd__(*args, **kwargs)
 
     def add_ip(self, ip_address, hostname=None):
@@ -236,14 +235,15 @@ class rdns_reaper:
                 self._dns_dict.update({ip_address: None})
             else:
                 self._dns_dict.update({ip_address: hostname})
-        except AddrFormatError:
-            raise TypeError
+            return ip_address
+        except AddrFormatError as error_case:
+            raise TypeError from error_case
 
     def add_ip_list(self, ip_list):
         """Add all new IP's from a list."""
-        if type(ip_list) is set:
+        if isinstance(ip_list, set):
             ip_list = list(ip_list)
-        if type(ip_list) is not list:
+        if not isinstance(ip_list, list):
             raise TypeError
         for ip_address in ip_list:
             self.add_ip(ip_address)
@@ -261,12 +261,6 @@ class rdns_reaper:
             option (bool): Set to True to disable automatic filtering of reserved networks
 
         """
-        if not isinstance(option, bool):
-            raise TypeError
-
-        self._allow_reserved_networks = option
-
-    def allow_reserved_networks(self, option):
         if not isinstance(option, bool):
             raise TypeError
 
@@ -388,7 +382,7 @@ class rdns_reaper:
         else:
             initial_pending_ips = [str(x) for x in pending_ipset]
 
-        pending_ips = list()
+        pending_ips = []
 
         for key in initial_pending_ips:
             address = IPAddress(key)
@@ -441,12 +435,15 @@ class rdns_reaper:
                 Can be None to reset record to allow for subsequent lookup
         """
         try:
-            ip_address = IPAddress(ip_address)
-            self._dns_dict[ip_address] = hostname
-        except AddrFormatError:
-            raise TypeError
-        except KeyError:
-            return False
+            IPAddress(ip_address)
+        except AddrFormatError as error_case:
+            raise TypeError(f"IP Error: {error_case}") from error_case
+
+        if ip_address not in self._dns_dict.keys():
+            raise KeyError("Address does not exist")
+        self._dns_dict[ip_address] = hostname
+        # except KeyError as error_case:
+        # raise KeyError("Address does not exist")
 
     def set_resolver(self, resolver_ip):
         """Set the desired resolve IP - NOT WORKING."""
@@ -456,7 +453,7 @@ class rdns_reaper:
         except AddrFormatError:
             raise TypeError
 
-    def set_filter(self, input, **kwargs):
+    def set_filter(self, filter_data, **kwargs):
         if kwargs.get("mode") is None:
             self._filter_mode = "block"
         elif kwargs.get("mode").lower() in ("allow", "block"):
@@ -464,15 +461,15 @@ class rdns_reaper:
         else:
             raise ValueError
 
-        if isinstance(input, str):
-            input = IPSet([input])
-        elif isinstance(input, list):
-            input = IPSet(input)
+        if isinstance(filter_data, str):
+            filter_data = IPSet([filter_data])
+        elif isinstance(filter_data, list):
+            filter_data = IPSet(filter_data)
 
-        if not isinstance(input, IPSet):
+        if not isinstance(filter_data, IPSet):
             raise TypeError
 
-        self._filter = input
+        self._filter = filter_data
 
     def values(self):
         """Return the hostnames as values in list format."""
