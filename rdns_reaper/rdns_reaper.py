@@ -43,15 +43,6 @@ IPV6_RESERVED_NETWORK_LIST = [
 
 
 class rdns_reaper:
-<<<<<<< HEAD
-    """Reverse DNS Lookup Engine."""
-
-    _concurrent = 5
-    _filter = None
-    _filter_mode = None
-=======
->>>>>>> eedcba2 (Refactoring)
-
     """Reverse DNS Lookup Engine."""
 
     _concurrent = 5

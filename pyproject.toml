@@ -1,8 +1,3 @@
 [build-system]
 requires = ["setuptools", "virtualenv"]
 build-backend = "setuptools.build_meta"
-
-[project]
-name = "rdns_reaper"
-authors = [{name: "Will Mullaney", email = "rdns-reaper@mullaneywt.anonaddy.com"}]
-dynamic = ["version", "description"]
