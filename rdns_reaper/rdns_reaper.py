@@ -45,19 +45,7 @@ IPV6_RESERVED_NETWORK_LIST = [
 class rdns_reaper:
     """Reverse DNS Lookup Engine."""
 
-    _concurrent = 5
-    _filter = None
-    _filter_mode = None
-    _dns_dict = {}
-    _options_dict = {
-        "allow_reserved_networks": False,
-        "concurrent": 5,
-        "filemode": None,
-        "filename": None,
-        "filter": None,
-        "filtermode": None,
-        "limit_to_rfc1918": False,
-    }
+
 
     def __init__(self, **kwargs):
         """Initialize class and take in user options.
@@ -83,7 +71,19 @@ class rdns_reaper:
 
         """
         self._resolver_ip = None
-
+        self._dns_dict = {}
+        self._concurrent = 5
+        self._filter = None
+        self._filter_mode = None
+        self._options_dict = {
+            "allow_reserved_networks": False,
+            "concurrent": 5,
+            "filemode": None,
+            "filename": None,
+            "filter": None,
+            "filtermode": None,
+            "limit_to_rfc1918": False,
+        }
         """Check for RFC1918 filtering"""
         if "limit_to_rfc1918" in kwargs:
             self.limit_to_rfc1918(kwargs["limit_to_rfc1918"])
