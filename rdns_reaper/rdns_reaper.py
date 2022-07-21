@@ -71,15 +71,13 @@ class rdns_reaper:
         self._resolver_ip = None
         self._dns_dict = {}
         self._concurrent = 5
-        self._filter = None
-        self._filter_mode = None
         self._options_dict = {
             "allow_reserved_networks": False,
             "concurrent": 5,
             "filemode": None,
             "filename": None,
             "filter": None,
-            "filtermode": None,
+            "filter_mode": None,
             "limit_to_rfc1918": False,
         }
         """Check for RFC1918 filtering"""
@@ -90,16 +88,13 @@ class rdns_reaper:
 
         """Check for custom filtering"""
         if kwargs.get("filter") is not None:
-            if kwargs.get("filtermode") is not None:
-                self.set_filter(kwargs["filter"], mode=kwargs["filtermode"])
-            else:
-                self.set_filter(kwargs["filter"])
-
+            self.set_filter(kwargs.get("filter"), mode=kwargs.get("filtermode"))
+         
         """Allow reserved network check"""
         if kwargs.get("allow_reserved_networks"):
-            self._allow_reserved_networks = True
+            self._options_dict["allow_reserved_networks"] = True
         else:
-            self._allow_reserved_networks = False
+            self._options_dict["allow_reserved_networks"] = False
 
         """Process parallel lookup concurrency"""
         if kwargs.get("concurrent"):
@@ -264,7 +259,7 @@ class rdns_reaper:
         if not isinstance(option, bool):
             raise TypeError
 
-        self._allow_reserved_networks = option
+        self._options_dict["allow_reserved_networks"] = option
 
     def clear_all_hostnames(self):
         """Clear all the hostnames from existing entries."""
@@ -278,13 +273,14 @@ class rdns_reaper:
             ip (str): A string containing an IP address
         """
         try:
-            ip_address = IPAddress(ip_address)
-            self._dns_dict[ip_address] = None
-            return True
+            IPAddress(ip_address)
         except AddrFormatError as error_case:
             raise TypeError from error_case
-        except KeyError:
-            return False
+        
+        if ip_address not in self._dns_dict.keys():
+            raise KeyError("Address not found")
+
+        self._dns_dict[ip_address] = None
 
     def dict(self):
         """Return the internal dictionary to the calling function."""
@@ -296,10 +292,10 @@ class rdns_reaper:
 
     def get_filter(self):
         """Return current filter status."""
-        try:
-            return (self._filter, self._filter_mode)
-        except AttributeError:
-            return None
+        return (self._options_dict["filter"], self._options_dict["filter_mode"])
+        # try:
+        # except AttributeError:
+            # return None
 
     def get_options(self):
         """Return info about the various options set by the user"""
@@ -357,12 +353,12 @@ class rdns_reaper:
         """Build list of IP's to perform resolver on, shared by serial and parallel methods."""
         if self._options_dict["limit_to_rfc1918"]:
             IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
-        elif self._allow_reserved_networks is False:
+        elif self._options_dict["allow_reserved_networks"] is False:
             IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
         else:
             IPv4_skipped_networks = IPSet()
 
-        if self._allow_reserved_networks is False:
+        if self._options_dict["allow_reserved_networks"] is False:
             IPv6_skipped_networks = IPSet(IPV6_RESERVED_NETWORK_LIST)
         else:
             IPv6_skipped_networks = IPSet()
@@ -373,11 +369,11 @@ class rdns_reaper:
 
         pending_ipset = IPSet(initial_ip_list)
 
-        if self._filter_mode == "block":
-            result_ipset = pending_ipset - self._filter
+        if self._options_dict["filter_mode"] == "block":
+            result_ipset = pending_ipset - self._options_dict["filter"]
             initial_pending_ips = [str(x) for x in result_ipset]
-        elif self._filter_mode == "allow":
-            result_ipset = pending_ipset & self._filter
+        elif self._options_dict["filter_mode"] == "allow":
+            result_ipset = pending_ipset & self._options_dict["filter"]
             initial_pending_ips = [str(x) for x in result_ipset]
         else:
             initial_pending_ips = [str(x) for x in pending_ipset]
@@ -454,10 +450,12 @@ class rdns_reaper:
             raise TypeError
 
     def set_filter(self, filter_data, **kwargs):
+        print(filter_data)
+        print(kwargs)
         if kwargs.get("mode") is None:
-            self._filter_mode = "block"
+            self._options_dict["filter_mode"] = "block"
         elif kwargs.get("mode").lower() in ("allow", "block"):
-            self._filter_mode = kwargs.get("mode").lower()
+            self._options_dict["filter_mode"] = kwargs.get("mode").lower()
         else:
             raise ValueError
 
@@ -469,7 +467,7 @@ class rdns_reaper:
         if not isinstance(filter_data, IPSet):
             raise TypeError
 
-        self._filter = filter_data
+        self._options_dict["filter"] = filter_data
 
     def values(self):
         """Return the hostnames as values in list format."""
@@ -487,17 +485,24 @@ class rdns_reaper:
         return False
 
     @staticmethod
+    def _isreservedaddress(address_txt):
+        """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
+        address = IPAddress(address_txt)
+
+        if address.version == 4:
+            return rdns_reaper._isreservedIPv4(address_txt)
+        elif address.version == 6:
+            return rdns_reaper._isreservedIPv6(address_txt)
+        else:
+            raise ValueError
+
+    @staticmethod
     def _isreservedIPv4(address_txt):
         """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
         address = IPAddress(address_txt)
 
         if address.version == 4:
             reserved_network_IPSet = IPSet(IPV4_RESERVED_NETWORK_LIST)
-            if address_txt in reserved_network_IPSet:
-                return True
-            return False
-        elif address.version == 6:
-            reserved_network_IPSet = IPSet(IPV6_RESERVED_NETWORK_LIST)
             if address_txt in reserved_network_IPSet:
                 return True
             return False
