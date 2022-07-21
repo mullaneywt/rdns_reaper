@@ -329,6 +329,7 @@ class rdns_reaper:
         Args
             filename (str): path and filename for the disk based YAML cache file
         """
+        with open(filename) as f_handle:
             f_data = f_handle.read()
             self._dns_dict = yaml.safe_load(f_data)
 
