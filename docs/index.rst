@@ -17,7 +17,8 @@ Important URLs:
 ---------------
 
 * Bug Tracker: `https://github.com/mullaneywt/rdns_reaper/issues <https://github.com/mullaneywt/rdns_reaper/issues>`_
-* Documentation: `https://rdns-reaper.readthedocs.io/en/latest/ <https://rdns-reaper.readthedocs.io/en/latest/>`_
+* Current Release Documentation: `https://rdns-reaper.readthedocs.io/en/latest/ <https://rdns-reaper.readthedocs.io/en/latest/>`_
+* Release Candidate Documentation: `https://rdns-reaper.readthedocs.io/en/main/ <https://rdns-reaper.readthedocs.io/en/main/>`_
 * Source Code: `http://github.com/mullaneywt/rdns_reaper <http://github.com/mullaneywt/rdns_reaper>`_
 * PyPI: `https://pypi.org/project/rdns-reaper/ <https://pypi.org/project/rdns-reaper/>`_
 
