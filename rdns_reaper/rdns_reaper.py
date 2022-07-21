@@ -89,7 +89,7 @@ class rdns_reaper:
         """Check for custom filtering"""
         if kwargs.get("filter") is not None:
             self.set_filter(kwargs.get("filter"), mode=kwargs.get("filtermode"))
-         
+
         """Allow reserved network check"""
         if kwargs.get("allow_reserved_networks"):
             self._options_dict["allow_reserved_networks"] = True
@@ -276,7 +276,7 @@ class rdns_reaper:
             IPAddress(ip_address)
         except AddrFormatError as error_case:
             raise TypeError from error_case
-        
+
         if ip_address not in self._dns_dict.keys():
             raise KeyError("Address not found")
 
@@ -295,7 +295,7 @@ class rdns_reaper:
         return (self._options_dict["filter"], self._options_dict["filter_mode"])
         # try:
         # except AttributeError:
-            # return None
+        # return None
 
     def get_options(self):
         """Return info about the various options set by the user"""
@@ -540,4 +540,3 @@ class rdns_reaper:
                 return (key, value)
             else:
                 raise StopIteration
-            pass

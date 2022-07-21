@@ -178,25 +178,54 @@ def test_kwargs_concurrent():
         assert False
 
 
+def test_kwargs_filename():
+    dns = rdns_reaper(filename="test.yaml")
+    try:
+        dns = rdns_reaper(filename=False)
+    except TypeError:
+        assert True
+    else:
+        assert False
+
+
+def test_kwargs_unresolvable():
+    dns = rdns_reaper(unresolvable=r"N\A")
+    try:
+        dns = rdns_reaper(unresolvable=False)
+    except TypeError:
+        assert True
+    else:
+        assert False
+
+
 def test_filter_1():
     dns = rdns_reaper()
     dns += ["10.0.0.1", "10.0.1.2"]
-
+    dns.set_filter("10.0.0.0/24")
+    assert dns._build_resolve_list() == ["10.0.1.2"]
     dns.set_filter("10.0.0.0/24", mode="block")
     assert dns._build_resolve_list() == ["10.0.1.2"]
     dns.set_filter("10.0.0.0/24", mode="allow")
     assert dns._build_resolve_list() == ["10.0.0.1"]
+    try:
+        dns.set_filter("10.0.0.0/24", mode="taco")
+    except ValueError:
+        assert True
+    else:
+        assert False
 
 
 def test_isrfc1918():
     assert rdns_reaper._isrfc1918("10.0.0.1")
     assert rdns_reaper._isrfc1918("1.0.0.1") is False
 
+
 def test_isreservedaddress():
     assert rdns_reaper._isreservedaddress("224.0.0.1")
     assert rdns_reaper._isreservedaddress("10.0.0.1") is False
     assert rdns_reaper._isreservedaddress("fe80::1")
     assert rdns_reaper._isreservedaddress("2600::") is False
+
 
 def test_isreservedIPv4():
     assert rdns_reaper._isreservedIPv4("224.0.0.1")
@@ -219,6 +248,34 @@ def test_isreservedIPv6():
     except ValueError:
         assert True
     except AddrFormatError:
+        assert True
+    else:
+        assert False
+
+
+def test_resolver_all_1():
+    dns1 = rdns_reaper()
+    dns1 += ["1.1.1.1", "8.8.8.8"]
+    dns1.resolve_all()
+
+    assert dns1["1.1.1.1"] == "one.one.one.one"
+
+
+def test_setname():
+    dns1 = rdns_reaper()
+    dns1 += ["1.1.1.1", "8.8.8.8"]
+    dns1.set_name("1.1.1.1", "one.one.one.one")
+    assert dns1["1.1.1.1"] == "one.one.one.one"
+    try:
+        dns1.set_name("taco", "taco")
+    except TypeError:
+        assert True
+    else:
+        assert False
+
+    try:
+        dns1.set_name("2.2.2.2", "two.two.two.two")
+    except KeyError:
         assert True
     else:
         assert False
