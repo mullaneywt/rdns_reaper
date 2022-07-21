@@ -95,3 +95,29 @@ Example preventing searching the RFC1918 space
 >>> dns = rdns_reaper(filter=filterdata, filtermode="block")
 
 If `filtermode` is not specified then the default is a blocklist.
+
+Disk based cache
+----------------
+
+A disk based cache in YAML format is available to store data between executions of the resolver engine.  The keyword argument `filename` containing an optional path and filename for the cache is presented when the instance is created, along with a `w` or `r` argument as a `filemode` keyword argument to setup the resolver as read-write or read only.
+
+The cache, if it exists, is automatically read in when an instance is created, including both the IP address and hostname (is previously resolved).  The cache can be saved to disk by calling the `savefile()` method or will automatically be saved if used inside of a `with open() as handle` style block. 
+
+If a cache file doesn't exit, the resolver starts with an empty dictionary and will create the file upon execution of the `savefile()` method.
+
+Build an initial cache, resolve entries, and store
+
+>>> dns1 = rdns_reaper(filename="cache.yaml", filemode="w")
+>>> ips_to_resolve = ["1.1.1.1", "8.8.8.8"]
+>>> dns1.add(ips_to_resolve)
+>>> dns1.resolve_all()
+>>> dns1.savefile()
+
+Create a new instance and read in the cache
+
+>>> dns2 = rdns_reaper(filename="cache.yaml", filemode="r")
+>>> print(dns2.items())
+
+Output
+
+>>> {'1.1.1.1': 'one.one.one.one', '8.8.8.8': 'dns.google'}
