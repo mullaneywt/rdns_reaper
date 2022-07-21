@@ -1,5 +1,6 @@
 import pytest
 from rdns_reaper import rdns_reaper
+from netaddr import IPAddress, IPNetwork, IPSet
 
 
 def test_simpletest_1():
@@ -35,6 +36,24 @@ def test__del__():
     assert "10.0.0.1" not in dns1
 
 
+def test_add_w_ip():
+    dns1 = rdns_reaper()
+    dns1.add("10.0.0.1")
+    assert "10.0.0.1" in dns1
+
+def test_add_w_list():
+    dns1 = rdns_reaper()
+    dns1.add(["10.0.0.1", "10.0.0.2"])
+    assert "10.0.0.1" in dns1
+    assert "10.0.0.2" in dns1
+
+# def test_add_w_ipset():
+#     dns1 = rdns_reaper()
+#     ips = IPSet(["10.0.0.1", "10.0.0.2"])
+#     dns1.add(ips)
+#     assert "10.0.0.1" in dns1
+#     assert "10.0.0.2" in dns1
+
 def test_add_ip():
     dns1 = rdns_reaper()
     dns1.add_ip("10.0.0.1")
@@ -50,13 +69,13 @@ def test_add_ip_list():
 def test_limit_to_rfc1918_true():
     dns1 = rdns_reaper()
     dns1.limit_to_rfc1918(True)
-    assert dns1._limit_to_rfc1918
+    assert dns1._options_dict['limit_to_rfc1918']
 
 
 def test_limit_to_rfc1918_false():
     dns1 = rdns_reaper()
     dns1.limit_to_rfc1918(False)
-    assert dns1._limit_to_rfc1918 is False
+    assert dns1._options_dict['limit_to_rfc1918'] is False
 
 
 def test_iterator():

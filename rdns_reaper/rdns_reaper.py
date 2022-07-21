@@ -48,6 +48,16 @@ class rdns_reaper:
     _concurrent = 5
     _filter = None
     _filter_mode = None
+    _dns_dict = {}
+    _options_dict = {
+        "allow_reserved_networks": False,
+        "concurrent": 5,
+        "filemode": None,
+        "filename": None,
+        "filter": None,
+        "filtermode": None,
+        "limit_to_rfc1918": False,
+    }
 
     def __init__(self, **kwargs):
         """Initialize class and take in user options.
@@ -72,14 +82,13 @@ class rdns_reaper:
 
 
         """
-        self._dns_dict = {}
         self._resolver_ip = None
 
         """Check for RFC1918 filtering"""
         if "limit_to_rfc1918" in kwargs:
             self.limit_to_rfc1918(kwargs["limit_to_rfc1918"])
         else:
-            self._limit_to_rfc1918 = False
+            self._options_dict["limit_to_rfc1918"] = False
 
         """Check for custom filtering"""
         if kwargs.get("filter") is not None:
@@ -97,13 +106,13 @@ class rdns_reaper:
         """Process parallel lookup concurrency"""
         if kwargs.get("concurrent"):
             if isinstance(kwargs["concurrent"], int):
-                self._concurrent = kwargs["concurrent"]
+                self._options_dict["concurrent"] = kwargs["concurrent"]
             else:
                 raise TypeError
 
         """Determine how to mark unresolvable entries"""
         try:
-            if type(kwargs["unresolvable"]) is str:
+            if isinstance(kwargs["unresolvable"], str):
                 self._unresolvable = kwargs["unresolvable"]
             else:
                 raise TypeError
@@ -111,26 +120,26 @@ class rdns_reaper:
             self._unresolvable = None
 
         try:
-            if type(kwargs["filemode"]) is str:
-                self._filemode = kwargs["filemode"]
+            if isinstance(kwargs["filemode"], str):
+                self._options_dict["filemode"] = kwargs["filemode"]
             else:
                 raise TypeError
         except KeyError:
-            self._filemode = None
+            pass
 
         try:
-            if type(kwargs["filename"]) is str:
-                self._filename = kwargs["filename"]
+            if isinstance(kwargs["filename"], str):
+                self._options_dict["filename"] = kwargs["filename"]
             else:
                 raise TypeError
         except KeyError:
-            self._filename = None
+            pass
 
-        if (self._filename is not None) and (
-            (self._filemode == "r") or (self._filemode == "w")
+        if (self._options_dict["filename"] is not None) and (
+            self._options_dict["filemode"] in ("r", "w")
         ):
             try:
-                self.loadfile(self._filename)
+                self.loadfile(self._options_dict["filename"])
             except FileNotFoundError:
                 pass
 
@@ -149,15 +158,15 @@ class rdns_reaper:
             raise TypeError
         return self_copy
 
-    def __contains__(self, ip):
+    def __contains__(self, ip_address):
         """Allow for checking of IP in the instance."""
-        if ip in self._dns_dict.keys():
+        if ip_address in self._dns_dict.keys():
             return True
         return False
 
-    def __delitem__(self, ip):
+    def __delitem__(self, ip_address):
         """Remove an item if del() is called."""
-        self.remove_ip(ip)
+        self.remove_ip(ip_address)
 
     def __enter__(self):
         """Return self for use in 'with open()' style blocks."""
@@ -165,14 +174,16 @@ class rdns_reaper:
 
     def __exit__(self, exception_type, exception_value, traceback):
         """Save file when class is being destroyed as appropriate."""
-        if (self._filename is not None) and (self._filemode == "w"):
-            self.savefile(self._filename)
+        if (self._options_dict["filename"] is not None) and (
+            self._options_dict["filemode"] == "w"
+        ):
+            self.savefile(self._options_dict["filename"])
 
-    def __getitem__(self, ip):
+    def __getitem__(self, ip_address):
         """Return IP address from internal dictionary, false if not found."""
         try:
-            IPAddress(ip)
-            return self._dns_dict[ip]
+            IPAddress(ip_address)
+            return self._dns_dict[ip_address]
         except AddrFormatError:
             raise TypeError
         except KeyError:
@@ -182,7 +193,7 @@ class rdns_reaper:
         """Add two instances together and return."""
         if isinstance(new, rdns_reaper):
             self._dns_dict.update(new._dns_dict)
-        elif type(new) is str:
+        elif isinstance(new, str):
             self.add_ip(new)
         elif type(new) is set:
             self.add_ip_list(new)
@@ -214,17 +225,17 @@ class rdns_reaper:
     def add(self, *args, **kwargs):
         self.__iadd__(*args, **kwargs)
 
-    def add_ip(self, ip, hostname=None):
+    def add_ip(self, ip_address, hostname=None):
         """Add an IP to the list with option hostname, skip if exists."""
-        if ip in self._dns_dict.keys():
+        if ip_address in self._dns_dict.keys():
             return True
 
         try:
-            IPAddress(ip)
+            IPAddress(ip_address)
             if hostname is None:
-                self._dns_dict.update({ip: None})
+                self._dns_dict.update({ip_address: None})
             else:
-                self._dns_dict.update({ip: hostname})
+                self._dns_dict.update({ip_address: hostname})
         except AddrFormatError:
             raise TypeError
 
@@ -298,30 +309,30 @@ class rdns_reaper:
 
     def get_options(self):
         """Return info about the various options set by the user"""
-        options_dict = {
-            "allow_reserved_networks": self._allow_reserved_networks,
-            "concurrent": self._concurrent,
-            "limit_to_rfc1918": self._limit_to_rfc1918,
-            "filter": self._filter,
-            "filtermode": self._filter_mode,
-            "filename": self._filename,
-            "filemode": self._filemode,
-        }
-        return options_dict
+        # options_dict = {
+        #     "allow_reserved_networks": self._allow_reserved_networks,
+        #     "concurrent": self._concurrent,
+        #     "limit_to_rfc1918": self._limit_to_rfc1918,
+        #     "filter": self._filter,
+        #     "filtermode": self._filter_mode,
+        #     "filename": self._filename,
+        #     "filemode": self._filemode,
+        # }
+        return self._options_dict
 
     def items(self):
         """Return the IP address and hostnames as k, v pairs in list format."""
-        return {ip: hostname for ip, hostname in self._dns_dict.items()}.items()
+        return dict(self._dns_dict.items())
 
     def keys(self):
         """Return the IP address as keys in list format."""
-        return [ip for ip in self._dns_dict.keys()]
+        return list(self._dns_dict.keys())
 
     def limit_to_rfc1918(self, value):
         """Set the RFC1918 filter."""
-        if type(value) is not bool:
+        if not isinstance(value, bool):
             raise TypeError
-        self._limit_to_rfc1918 = value
+        self._options_dict["limit_to_rfc1918"] = value
 
     def loadfile(self, filename):
         """Load saved data in YAML format.
@@ -350,7 +361,7 @@ class rdns_reaper:
 
     def _build_resolve_list(self):
         """Build list of IP's to perform resolver on, shared by serial and parallel methods."""
-        if self._limit_to_rfc1918:
+        if self._options_dict["limit_to_rfc1918"]:
             IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
         elif self._allow_reserved_networks is False:
             IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
@@ -382,7 +393,7 @@ class rdns_reaper:
         for key in initial_pending_ips:
             address = IPAddress(key)
 
-            if self._limit_to_rfc1918 is False:
+            if self._options_dict["limit_to_rfc1918"] is False:
                 if (address.version == 4) and (address not in IPv4_skipped_networks):
                     pending_ips.append(key)
                 elif (address.version == 6) and (address not in IPv6_skipped_networks):
@@ -397,7 +408,7 @@ class rdns_reaper:
         """Resolve all unknown IPs in parallel."""
         pending_ips = self._build_resolve_list()
         with concurrent.futures.ThreadPoolExecutor(
-            max_workers=self._concurrent
+            max_workers=self._options_dict["concurrent"]
         ) as executor:
             executor.map(self._resolve_function, set(pending_ips))
 
@@ -410,13 +421,16 @@ class rdns_reaper:
 
     def savefile(self, filename=None):
         """Save internal dictionary to YAML file."""
-        if filename is None and self._filename is not None and self._filemode == "w":
-            filename = self._filename
+        if (
+            filename is None
+            and self._options_dict["filename"] is not None
+            and self._options_dict["filemode"] == "w"
+        ):
+            filename = self._options_dict["filename"]
 
         with open(filename, "w", encoding="UTF-8") as f_handle:
             f_handle.write("---\n")
             f_handle.write(yaml.dump(self._dns_dict))
-
 
     def set_name(self, ip_address, hostname):
         """Force the hostname of an IP.
@@ -427,8 +441,8 @@ class rdns_reaper:
                 Can be None to reset record to allow for subsequent lookup
         """
         try:
-            ip = IPAddress(ip)
-            self._dns_dict[ip] = hostname
+            ip_address = IPAddress(ip_address)
+            self._dns_dict[ip_address] = hostname
         except AddrFormatError:
             raise TypeError
         except KeyError:
@@ -462,7 +476,7 @@ class rdns_reaper:
 
     def values(self):
         """Return the hostnames as values in list format."""
-        return [hostname for hostname in self._dns_dict.values()]
+        return list(self._dns_dict.values())
 
     @staticmethod
     def _isrfc1918(address_txt):
