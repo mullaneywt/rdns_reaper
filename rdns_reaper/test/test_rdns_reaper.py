@@ -194,6 +194,20 @@ def test_clearname():
     assert dns1["1.1.1.1"] == None
     assert dns1["8.8.8.8"] == "google.com"
 
+    try:
+        dns1.clearname("1.1.1.1.1")
+    except TypeError:
+        assert True
+    else:
+        assert False
+
+    try:
+        dns1.clearname(False)
+    except KeyError:
+        assert True
+    else:
+        assert False
+
 
 def test_get_filter():
     filter_data = ["10.0.0.0/8", "172.16.0.0/12"]
@@ -256,6 +270,20 @@ def test_limit_to_rfc1918_false():
     assert dns1._options_dict["limit_to_rfc1918"] is False
 
 
+def test_dict():
+    dns1 = rdns_reaper()
+    dns1.add_ip("1.1.1.1", "one.one.one.one")
+    response = dns1.dict()
+    assert response == {"1.1.1.1": "one.one.one.one"}
+
+
+def test_get_dict():
+    dns1 = rdns_reaper()
+    dns1.add_ip("1.1.1.1", "one.one.one.one")
+    response = dns1.get_dict()
+    assert response == {"1.1.1.1": "one.one.one.one"}
+
+
 def test_items():
     dns1 = rdns_reaper()
     dns1.add_ip("1.1.1.1", "one.one.one.one")
@@ -310,6 +338,25 @@ def test_file_load_1():
     assert dns["1.1.1.1"] == "one.one.one.one"
 
 
+def test_file_load_2():
+    with rdns_reaper(filename="rdns_reaper/test/loadtest.yaml", filemode="r") as dns:
+        assert dns["1.1.1.1"] == "one.one.one.one"
+
+
+def test_file_load3():
+    try:
+        dns = rdns_reaper(filename="rdns_reaper/test/loadtest.yaml", filemode="q")
+    except ValueError:
+        assert True
+    else:
+        assert False
+
+    try:
+        dns = rdns_reaper(filename="rdns_reaper/test/loadtest.yaml", filemode=False)
+    except TypeError:
+        assert True
+    else:
+        assert False
 def test_file_save_1():
     dns1 = rdns_reaper(filename="rdns_reaper/test/savetest.yaml", filemode="w")
     dns1.add_ip("1.1.1.1", "one.one.one.one")
@@ -317,6 +364,14 @@ def test_file_save_1():
 
     dns2 = rdns_reaper(filename="rdns_reaper/test/savetest.yaml", filemode="r")
     assert dns2["1.1.1.1"] == "one.one.one.one"
+
+
+def test_file_save_2():
+    with rdns_reaper(filename="rdns_reaper/test/savetest.yaml", filemode="w") as dns1:
+        dns1.add_ip("1.1.1.1", "one.one.one.one")
+
+    with rdns_reaper(filename="rdns_reaper/test/savetest.yaml", filemode="r") as dns2:
+        assert dns2["1.1.1.1"] == "one.one.one.one"
 
 
 def test_filter_1():
@@ -328,7 +383,7 @@ def test_filter_1():
     assert dns._build_resolve_list() == ["10.0.1.2"]
     dns.set_filter("10.0.0.0/24", mode="allow")
     assert dns._build_resolve_list() == ["10.0.0.1"]
-    
+
     try:
         dns.set_filter("10.0.0.0/24", mode="taco")
     except ValueError:
@@ -342,6 +397,7 @@ def test_filter_1():
         assert True
     else:
         assert False
+
 
 def test_isrfc1918():
     assert rdns_reaper._isrfc1918("10.0.0.1")
@@ -381,12 +437,30 @@ def test_isreservedIPv6():
         assert False
 
 
+def test_remove_ip():
+    dns = rdns_reaper()
+    dns.add_ip("1.1.1.1")
+    assert "1.1.1.1" in dns
+    dns.remove_ip("1.1.1.1")
+    assert "1.1.1.1" not in dns
+
+    assert dns.remove_ip("2.2.2.2") is False
+
+    try:
+        dns.remove_ip("1.1.1.1.1")
+    except TypeError:
+        assert True
+    else:
+        assert False
+
+
 def test_resolver_all_1():
     dns1 = rdns_reaper(allow_reserved_networks=True)
-    dns1 += ["1.1.1.1", "8.8.8.8", "10.255.254.253"]
+    dns1 += ["1.1.1.1", "8.8.8.8", "2600::", "10.255.254.253"]
     dns1.resolve_all()
 
     assert dns1["1.1.1.1"] == "one.one.one.one"
+    assert dns1["2600::"] == "www.sprint.net"
 
     dns2 = rdns_reaper(limit_to_rfc1918=True)
     dns2.add(["1.1.1.1", "10.0.0.1"])

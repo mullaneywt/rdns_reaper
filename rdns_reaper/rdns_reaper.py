@@ -114,6 +114,8 @@ class rdns_reaper:
 
         try:
             if isinstance(kwargs["filemode"], str):
+                if kwargs["filemode"] not in ("w", "r"):
+                    raise ValueError
                 self._options_dict["filemode"] = kwargs["filemode"]
             else:
                 raise TypeError
@@ -284,7 +286,7 @@ class rdns_reaper:
 
     def dict(self):
         """Return the internal dictionary to the calling function."""
-        return self.dict()
+        return self._dns_dict
 
     def get_dict(self):
         """Return the internal dictionary to the calling function."""
