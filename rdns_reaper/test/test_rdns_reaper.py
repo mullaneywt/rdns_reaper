@@ -16,14 +16,54 @@ def test_simple_iadd():
 
 def test__add__():
     dns1 = rdns_reaper()
+    dns1.add("10.0.0.1")
+    dns2 = dns1 + "10.0.0.2"
+    assert dns2.keys() == ["10.0.0.1", "10.0.0.2"]
+    dns3 = rdns_reaper()
+    dns3.add("10.0.0.3")
+    dns4 = dns2 + dns3
+    dns5 = dns4 + {"10.0.0.4", "10.0.0.5"}
+    for address in ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4", "10.0.0.5"]:
+        assert address in dns5.keys()
+    dns6 = dns5 + ["10.0.0.6", "10.0.0.7"]
+    for address in [
+        "10.0.0.1",
+        "10.0.0.2",
+        "10.0.0.3",
+        "10.0.0.4",
+        "10.0.0.5",
+        "10.0.0.6",
+        "10.0.0.7",
+    ]:
+        assert address in dns6.keys()
+
+    try:
+        dns1 + False
+    except TypeError:
+        assert True
+    else:
+        assert False
+
+
+def test__iadd__():
+    dns1 = rdns_reaper()
     dns2 = rdns_reaper()
     dns1 += "10.0.0.1"
-    dns2 += "10.0.0.2"
-    dns3 = dns1 + dns2
-    assert dns3.keys() == ["10.0.0.1", "10.0.0.2"]
+    dns2 += ["10.0.0.2", "10.0.0.3"]
+    dns2 += {"10.0.0.4", "10.0.0.5"}
+    dns1 += dns2
+    for address in ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4", "10.0.0.5"]:
+        assert address in dns1.keys()
+
+    try:
+        dns1 += False
+    except TypeError:
+        assert True
+    else:
+        assert False
 
 
-def test__contains():
+def test__contains__():
     dns1 = rdns_reaper()
     dns1 += "10.0.0.1"
     assert "10.0.0.1" in dns1
@@ -34,6 +74,13 @@ def test__del__():
     dns1 += "10.0.0.1"
     del dns1["10.0.0.1"]
     assert "10.0.0.1" not in dns1
+
+
+def test__set__item():
+    dns1 = rdns_reaper()
+    dns1.add("10.0.0.1")
+    dns1["10.0.0.1"] = "private.address"
+    assert dns1["10.0.0.1"] == "private.address"
 
 
 def test_add_w_ip():
@@ -60,14 +107,31 @@ def test_add_w_list():
 def test_add_ip():
     dns1 = rdns_reaper()
     dns1.add_ip("10.0.0.1")
+    dns1.add_ip("10.0.0.2", "private.address")
     assert "10.0.0.1" in dns1
     assert dns1.add_ip("10.0.0.1")
+    assert dns1["10.0.0.2"] == "private.address"
+
+    try:
+        dns1.add_ip("taco")
+    except TypeError:
+        assert True
+    else:
+        assert False
 
 
 def test_add_ip_list():
     dns1 = rdns_reaper()
-    dns1.add_ip_list(["10.0.0.1"])
+    dns1.add_ip_list(["10.0.0.1", "10.0.0.2"])
     assert "10.0.0.1" in dns1
+    assert "10.0.0.2" in dns1
+
+    try:
+        dns1.add_ip_list("taco")
+    except TypeError:
+        assert True
+    else:
+        assert False
 
 
 def test_allow_reserved_networks_1():
@@ -83,6 +147,13 @@ def test_allow_reserved_networks_1():
     assert dns2.get_options()["allow_reserved_networks"] is False
     dns2 = rdns_reaper(allow_reserved_networks=True)
     assert dns2.get_options()["allow_reserved_networks"] is True
+
+    try:
+        dns2.allow_reserved_networks("taco")
+    except TypeError:
+        assert True
+    else:
+        assert False
 
 
 def test_allow_reserved_networks_2():
@@ -137,6 +208,22 @@ def test_get_filter():
     assert response2 == (IPSet(filter_data), "allow")
 
 
+def test__getitem__():
+    dns1 = rdns_reaper()
+    dns1.add_ip("10.0.0.1")
+    response = dns1["10.0.0.1"]
+    assert response == None
+
+    try:
+        dns1["chocotaco"]
+    except AddrFormatError:
+        assert True
+    else:
+        assert False
+
+    assert dns1["10.0.0.2"] is False
+
+
 def test_limit_to_rfc1918_true():
     dns1 = rdns_reaper()
     assert dns1._options_dict["limit_to_rfc1918"] is False
@@ -148,11 +235,31 @@ def test_limit_to_rfc1918_true():
     dns2 = rdns_reaper(limit_to_rfc1918=False)
     assert dns2._options_dict["limit_to_rfc1918"] is False
 
+    try:
+        dns1.limit_to_rfc1918("chocotaco")
+    except TypeError:
+        assert True
+    else:
+        assert False
+
+    try:
+        dns1 = rdns_reaper(limit_to_rfc1918="chocotaco")
+    except TypeError:
+        assert True
+    else:
+        assert False
+
 
 def test_limit_to_rfc1918_false():
     dns1 = rdns_reaper()
     dns1.limit_to_rfc1918(False)
     assert dns1._options_dict["limit_to_rfc1918"] is False
+
+
+def test_items():
+    dns1 = rdns_reaper()
+    dns1.add_ip("1.1.1.1", "one.one.one.one")
+    assert dns1.items() == {"1.1.1.1": "one.one.one.one"}
 
 
 def test_iterator():
@@ -198,6 +305,20 @@ def test_kwargs_unresolvable():
         assert False
 
 
+def test_file_load_1():
+    dns = rdns_reaper(filename="rdns_reaper/test/loadtest.yaml", filemode="r")
+    assert dns["1.1.1.1"] == "one.one.one.one"
+
+
+def test_file_save_1():
+    dns1 = rdns_reaper(filename="rdns_reaper/test/savetest.yaml", filemode="w")
+    dns1.add_ip("1.1.1.1", "one.one.one.one")
+    dns1.savefile()
+
+    dns2 = rdns_reaper(filename="rdns_reaper/test/savetest.yaml", filemode="r")
+    assert dns2["1.1.1.1"] == "one.one.one.one"
+
+
 def test_filter_1():
     dns = rdns_reaper()
     dns += ["10.0.0.1", "10.0.1.2"]
@@ -207,6 +328,7 @@ def test_filter_1():
     assert dns._build_resolve_list() == ["10.0.1.2"]
     dns.set_filter("10.0.0.0/24", mode="allow")
     assert dns._build_resolve_list() == ["10.0.0.1"]
+    
     try:
         dns.set_filter("10.0.0.0/24", mode="taco")
     except ValueError:
@@ -214,6 +336,12 @@ def test_filter_1():
     else:
         assert False
 
+    try:
+        dns.set_filter(False)
+    except TypeError:
+        assert True
+    else:
+        assert False
 
 def test_isrfc1918():
     assert rdns_reaper._isrfc1918("10.0.0.1")
@@ -254,11 +382,16 @@ def test_isreservedIPv6():
 
 
 def test_resolver_all_1():
-    dns1 = rdns_reaper()
-    dns1 += ["1.1.1.1", "8.8.8.8"]
+    dns1 = rdns_reaper(allow_reserved_networks=True)
+    dns1 += ["1.1.1.1", "8.8.8.8", "10.255.254.253"]
     dns1.resolve_all()
 
     assert dns1["1.1.1.1"] == "one.one.one.one"
+
+    dns2 = rdns_reaper(limit_to_rfc1918=True)
+    dns2.add(["1.1.1.1", "10.0.0.1"])
+    assert "1.1.1.1" not in dns2._build_resolve_list()
+    assert "10.0.0.1" in dns2._build_resolve_list()
 
 
 def test_setname():
