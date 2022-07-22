@@ -177,8 +177,8 @@ class rdns_reaper:
         try:
             IPAddress(ip_address)
             return self._dns_dict[ip_address]
-        except AddrFormatError:
-            raise TypeError
+        except AddrFormatError as error_case:
+            raise AddrFormatError from error_case
         except KeyError:
             return False
 
