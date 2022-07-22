@@ -116,6 +116,7 @@ class rdns_reaper:
             if isinstance(kwargs["filemode"], str):
                 if kwargs["filemode"] not in ("w", "r"):
                     raise ValueError
+
                 self._options_dict["filemode"] = kwargs["filemode"]
             else:
                 raise TypeError
@@ -190,9 +191,9 @@ class rdns_reaper:
             self._dns_dict.update(new._dns_dict)
         elif isinstance(new, str):
             self.add_ip(new)
-        elif type(new) is set:
+        elif isinstance(new, set):
             self.add_ip_list(new)
-        elif type(new) is list:
+        elif isinstance(new, list):
             self.add_ip_list(new)
         else:
             raise TypeError
@@ -300,7 +301,7 @@ class rdns_reaper:
         # return None
 
     def get_options(self):
-        """Return info about the various options set by the user"""
+        """Return info about the various options set by the user."""
         # options_dict = {
         #     "allow_reserved_networks": self._allow_reserved_networks,
         #     "concurrent": self._concurrent,
@@ -332,7 +333,7 @@ class rdns_reaper:
         Args
             filename (str): path and filename for the disk based YAML cache file
         """
-        with open(filename) as f_handle:
+        with open(filename, encoding="UTF-8") as f_handle:
             f_data = f_handle.read()
             self._dns_dict = yaml.safe_load(f_data)
 
@@ -448,10 +449,11 @@ class rdns_reaper:
         try:
             IPAddress(resolver_ip)
             self._resolver_ip = resolver_ip
-        except AddrFormatError:
-            raise TypeError
+        except AddrFormatError as error_case:
+            raise TypeError from error_case
 
     def set_filter(self, filter_data, **kwargs):
+        """Setup a custom filter."""
         print(filter_data)
         print(kwargs)
         if kwargs.get("mode") is None:
@@ -493,10 +495,10 @@ class rdns_reaper:
 
         if address.version == 4:
             return rdns_reaper._isreservedIPv4(address_txt)
-        elif address.version == 6:
+        if address.version == 6:
             return rdns_reaper._isreservedIPv6(address_txt)
-        else:
-            raise ValueError
+
+        raise ValueError
 
     @staticmethod
     def _isreservedIPv4(address_txt):
@@ -508,8 +510,8 @@ class rdns_reaper:
             if address_txt in reserved_network_IPSet:
                 return True
             return False
-        else:
-            raise ValueError
+
+        raise ValueError
 
     @staticmethod
     def _isreservedIPv6(address_txt):
@@ -521,8 +523,8 @@ class rdns_reaper:
             if address_txt in reserved_network_IPSet:
                 return True
             return False
-        else:
-            raise ValueError
+
+        raise ValueError
 
     class _reaper_iterator:
         def __init__(self, parentclass):
@@ -540,5 +542,5 @@ class rdns_reaper:
                 value = self.__parentclass[key]
                 self.__counter += 1
                 return (key, value)
-            else:
-                raise StopIteration
+
+            raise StopIteration
