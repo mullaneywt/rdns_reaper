@@ -454,8 +454,6 @@ class rdns_reaper:
 
     def set_filter(self, filter_data, **kwargs):
         """Setup a custom filter."""
-        print(filter_data)
-        print(kwargs)
         if kwargs.get("mode") is None:
             self._options_dict["filter_mode"] = "block"
         elif kwargs.get("mode").lower() in ("allow", "block"):
