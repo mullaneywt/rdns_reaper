@@ -146,7 +146,9 @@ class rdns_reaper:
             self_copy._dns_dict.update(new._dns_dict)
         elif isinstance(new, str):
             self_copy.add_ip(new)
-        elif isinstance(new, (list, set)):
+        elif isinstance(new, set):
+            self_copy.add_ip_list(new)
+        elif isinstance(new, list):
             self_copy.add_ip_list(new)
         else:
             raise TypeError
@@ -189,7 +191,9 @@ class rdns_reaper:
             self._dns_dict.update(new._dns_dict)
         elif isinstance(new, str):
             self.add_ip(new)
-        elif isinstance(new, (list, set)):
+        elif isinstance(new, set):
+            self.add_ip_list(new)
+        elif isinstance(new, list):
             self.add_ip_list(new)
         else:
             raise TypeError
@@ -218,7 +222,7 @@ class rdns_reaper:
         """Generalized function for adding."""
         self.__iadd__(*args, **kwargs)
 
-    def add_ip(self, ip_address, hostname=None):
+    def add_ip(self, ip_address: str, hostname: str = None) -> bool | str:
         """Add an IP to the list with option hostname, skip if exists."""
         if ip_address in self._dns_dict.keys():
             return True
@@ -233,7 +237,7 @@ class rdns_reaper:
         except AddrFormatError as error_case:
             raise TypeError from error_case
 
-    def add_ip_list(self, ip_list):
+    def add_ip_list(self, ip_list: list):
         """Add all new IP's from a list."""
         if isinstance(ip_list, set):
             ip_list = list(ip_list)
@@ -242,7 +246,7 @@ class rdns_reaper:
         for ip_address in ip_list:
             self.add_ip(ip_address)
 
-    def allow_reserved_networks(self, option):
+    def allow_reserved_networks(self, option: bool):
         """Allow users to enable/disable automatic filtering of reserved networks.
 
         If a user wants to check reserved network IPs (loopbacks, link local, multicast, etc.)
@@ -265,11 +269,11 @@ class rdns_reaper:
         new_ip_dict = {ip: None for ip in self._dns_dict}
         self._dns_dict = new_ip_dict
 
-    def clearname(self, ip_address):
+    def clearname(self, ip_address: str):
         """Clear a specific IP's hostname.
 
         Args:
-            ip (str): A string containing an IP address
+            ip_address (str): A string containing an IP address
         """
         try:
             IPAddress(ip_address)
@@ -281,37 +285,49 @@ class rdns_reaper:
 
         self._dns_dict[ip_address] = None
 
-    def dict(self):
+    def dict(self) -> dict:
         """Return the internal dictionary to the calling function."""
         return self._dns_dict
 
-    def get_dict(self):
+    def get_dict(self) -> dict:
         """Return the internal dictionary to the calling function."""
         return self._dns_dict
 
-    def get_filter(self):
+    def get_filter(self) -> tuple:
         """Return current filter status."""
         return (self._options_dict["filter"], self._options_dict["filter_mode"])
+        # try:
+        # except AttributeError:
+        # return None
 
-    def get_options(self):
+    def get_options(self) -> dict:
         """Return info about the various options set by the user."""
+        # options_dict = {
+        #     "allow_reserved_networks": self._allow_reserved_networks,
+        #     "concurrent": self._concurrent,
+        #     "limit_to_rfc1918": self._limit_to_rfc1918,
+        #     "filter": self._filter,
+        #     "filtermode": self._filter_mode,
+        #     "filename": self._filename,
+        #     "filemode": self._filemode,
+        # }
         return self._options_dict
 
-    def items(self):
+    def items(self) -> dict:
         """Return the IP address and hostnames as k, v pairs in list format."""
         return dict(self._dns_dict.items())
 
-    def keys(self):
+    def keys(self) -> list:
         """Return the IP address as keys in list format."""
         return list(self._dns_dict.keys())
 
-    def limit_to_rfc1918(self, value):
+    def limit_to_rfc1918(self, value: bool):
         """Set the RFC1918 filter."""
         if not isinstance(value, bool):
             raise TypeError
         self._options_dict["limit_to_rfc1918"] = value
 
-    def loadfile(self, filename):
+    def loadfile(self, filename: str):
         """Load saved data in YAML format.
 
         Args
@@ -321,11 +337,11 @@ class rdns_reaper:
             f_data = f_handle.read()
             self._dns_dict = yaml.safe_load(f_data)
 
-    def remove_ip(self, ip_address):
+    def remove_ip(self, ip_address: str) -> bool:
         """Remove an IP from the list, return false if not found.
 
         Args:
-            ip (str): A string containing an IP Address to remove
+            ip_address (str): A string containing an IP Address to remove
         """
         try:
             IPAddress(ip_address)
@@ -396,7 +412,7 @@ class rdns_reaper:
         for address in pending_ips:
             self._resolve_function(address)
 
-    def savefile(self, filename=None):
+    def savefile(self, filename: str = None):
         """Save internal dictionary to YAML file."""
         if (
             filename is None
@@ -409,7 +425,7 @@ class rdns_reaper:
             f_handle.write("---\n")
             f_handle.write(yaml.dump(self._dns_dict))
 
-    def set_name(self, ip_address, hostname):
+    def set_name(self, ip_address: str, hostname: str):
         """Force the hostname of an IP.
 
         Args:
@@ -428,7 +444,7 @@ class rdns_reaper:
         # except KeyError as error_case:
         # raise KeyError("Address does not exist")
 
-    def set_filter(self, filter_data, **kwargs):
+    def set_filter(self, filter_data: str, **kwargs):
         """Setup a custom filter."""
         if kwargs.get("mode") is None:
             self._options_dict["filter_mode"] = "block"
@@ -447,12 +463,12 @@ class rdns_reaper:
 
         self._options_dict["filter"] = filter_data
 
-    def values(self):
+    def values(self) -> list:
         """Return the hostnames as values in list format."""
         return list(self._dns_dict.values())
 
     @staticmethod
-    def _isrfc1918(address_txt):
+    def _isrfc1918(address_txt: str | IPAddress) -> bool:
         """Determine if an address is RFC1918 private or not."""
         address = IPAddress(address_txt)
         rfc1918_networks = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
@@ -463,7 +479,7 @@ class rdns_reaper:
         return False
 
     @staticmethod
-    def _isreservedaddress(address_txt):
+    def _isreservedaddress(address_txt: str | IPAddress) -> bool:
         """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
         address = IPAddress(address_txt)
 
@@ -473,7 +489,7 @@ class rdns_reaper:
             return rdns_reaper._isreservedIPv6(address_txt)
 
     @staticmethod
-    def _isreservedIPv4(address_txt):
+    def _isreservedIPv4(address_txt: str | IPAddress) -> bool:
         """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
         address = IPAddress(address_txt)
 
@@ -486,7 +502,7 @@ class rdns_reaper:
         raise ValueError
 
     @staticmethod
-    def _isreservedIPv6(address_txt):
+    def _isreservedIPv6(address_txt: str | IPAddress) -> bool:
         """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
         address = IPAddress(address_txt)
 
