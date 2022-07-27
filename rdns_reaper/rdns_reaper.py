@@ -146,9 +146,7 @@ class rdns_reaper:
             self_copy._dns_dict.update(new._dns_dict)
         elif isinstance(new, str):
             self_copy.add_ip(new)
-        elif isinstance(new, set):
-            self_copy.add_ip_list(new)
-        elif isinstance(new, list):
+        elif isinstance(new, (list, set)):
             self_copy.add_ip_list(new)
         else:
             raise TypeError
@@ -191,9 +189,7 @@ class rdns_reaper:
             self._dns_dict.update(new._dns_dict)
         elif isinstance(new, str):
             self.add_ip(new)
-        elif isinstance(new, set):
-            self.add_ip_list(new)
-        elif isinstance(new, list):
+        elif isinstance(new, (list, set)):
             self.add_ip_list(new)
         else:
             raise TypeError
@@ -296,21 +292,9 @@ class rdns_reaper:
     def get_filter(self):
         """Return current filter status."""
         return (self._options_dict["filter"], self._options_dict["filter_mode"])
-        # try:
-        # except AttributeError:
-        # return None
 
     def get_options(self):
         """Return info about the various options set by the user."""
-        # options_dict = {
-        #     "allow_reserved_networks": self._allow_reserved_networks,
-        #     "concurrent": self._concurrent,
-        #     "limit_to_rfc1918": self._limit_to_rfc1918,
-        #     "filter": self._filter,
-        #     "filtermode": self._filter_mode,
-        #     "filename": self._filename,
-        #     "filemode": self._filemode,
-        # }
         return self._options_dict
 
     def items(self):
@@ -444,14 +428,6 @@ class rdns_reaper:
         # except KeyError as error_case:
         # raise KeyError("Address does not exist")
 
-    def set_resolver(self, resolver_ip):
-        """Set the desired resolve IP - NOT WORKING."""
-        try:
-            IPAddress(resolver_ip)
-            self._resolver_ip = resolver_ip
-        except AddrFormatError as error_case:
-            raise TypeError from error_case
-
     def set_filter(self, filter_data, **kwargs):
         """Setup a custom filter."""
         if kwargs.get("mode") is None:
@@ -496,8 +472,6 @@ class rdns_reaper:
         if address.version == 6:
             return rdns_reaper._isreservedIPv6(address_txt)
 
-        raise ValueError
-
     @staticmethod
     def _isreservedIPv4(address_txt):
         """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
@@ -531,8 +505,8 @@ class rdns_reaper:
             self.__parent_len = len(parentclass)
             self.__parent_keys = list(parentclass.keys())
 
-        def __iter__(self):
-            return self
+        # def __iter__(self):
+        #     return self
 
         def __next__(self):
             if self.__counter < self.__parent_len:

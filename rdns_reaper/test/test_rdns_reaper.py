@@ -16,15 +16,20 @@ def test_simple_iadd():
 
 def test__add__():
     dns1 = rdns_reaper()
+    """Add a single IP as a string with the add function"""
     dns1.add("10.0.0.1")
+    """Add a single IP as a string with the operand"""
     dns2 = dns1 + "10.0.0.2"
     assert dns2.keys() == ["10.0.0.1", "10.0.0.2"]
     dns3 = rdns_reaper()
     dns3.add("10.0.0.3")
+    """Add two classes together"""
     dns4 = dns2 + dns3
+    """Add a set to the class"""
     dns5 = dns4 + {"10.0.0.4", "10.0.0.5"}
     for address in ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4", "10.0.0.5"]:
         assert address in dns5.keys()
+    """Add a list to the class"""
     dns6 = dns5 + ["10.0.0.6", "10.0.0.7"]
     for address in [
         "10.0.0.1",
@@ -45,7 +50,43 @@ def test__add__():
         assert False
 
 
-def test__iadd__():
+def test__iadd1__():
+    dns1 = rdns_reaper()
+    """Add a single IP as a string with the add function"""
+    dns1.add("10.0.0.1")
+    """Add a single IP as a string with the operand"""
+    dns1 += "10.0.0.2"
+    assert dns1.keys() == ["10.0.0.1", "10.0.0.2"]
+    dns2 = rdns_reaper()
+    dns2.add("10.0.0.3")
+    """Add two classes together"""
+    dns1 += dns2
+    """Add a set to the class"""
+    dns1 += {"10.0.0.4", "10.0.0.5"}
+    for address in ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4", "10.0.0.5"]:
+        assert address in dns1.keys()
+    """Add a list to the class"""
+    dns1 += ["10.0.0.6", "10.0.0.7"]
+    for address in [
+        "10.0.0.1",
+        "10.0.0.2",
+        "10.0.0.3",
+        "10.0.0.4",
+        "10.0.0.5",
+        "10.0.0.6",
+        "10.0.0.7",
+    ]:
+        assert address in dns1.keys()
+
+    try:
+        dns1 += False
+    except TypeError:
+        assert True
+    else:
+        assert False
+
+
+def test__iadd2__():
     dns1 = rdns_reaper()
     dns2 = rdns_reaper()
     dns1 += "10.0.0.1"
@@ -359,6 +400,15 @@ def test_file_load3():
         assert False
 
 
+def test_file_load4():
+    try:
+        dns = rdns_reaper(filename="rdns_reaper/test/taco.yaml", filemode="r")
+    except:
+        assert False
+    else:
+        assert True
+
+
 def test_file_save_1():
     dns1 = rdns_reaper(filename="rdns_reaper/test/savetest.yaml", filemode="w")
     dns1.add_ip("1.1.1.1", "one.one.one.one")
@@ -425,6 +475,13 @@ def test_isreservedIPv4():
     else:
         assert False
 
+    try:
+        rdns_reaper._isreservedIPv4("::")
+    except ValueError:
+        assert True
+    else:
+        assert False
+
 
 def test_isreservedIPv6():
     assert rdns_reaper._isreservedIPv6("fe80::1")
@@ -434,6 +491,13 @@ def test_isreservedIPv6():
     except ValueError:
         assert True
     except AddrFormatError:
+        assert True
+    else:
+        assert False
+
+    try:
+        rdns_reaper._isreservedIPv6("10.0.0.1")
+    except ValueError:
         assert True
     else:
         assert False
