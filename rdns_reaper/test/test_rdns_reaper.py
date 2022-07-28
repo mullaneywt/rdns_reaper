@@ -11,7 +11,7 @@ def test_simpletest_1():
 def test_simple_iadd():
     dns = rdns_reaper()
     dns += "10.0.0.1"
-    assert dns["10.0.0.1"] == None
+    assert dns["10.0.0.1"] is None
 
 
 def test__add__():
