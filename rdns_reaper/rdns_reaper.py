@@ -200,7 +200,7 @@ class rdns_reaper:
 
     def __iter__(self):
         """Return an iterator as needed for k, v walking."""
-        return self._reaper_iterator(self)
+        return self._ReaperIterator(self)
 
     def __len__(self):
         """Determine number of addresses in module."""
@@ -295,21 +295,9 @@ class rdns_reaper:
     def get_filter(self) -> tuple:
         """Return current filter status."""
         return (self._options_dict["filter"], self._options_dict["filter_mode"])
-        # try:
-        # except AttributeError:
-        # return None
 
     def get_options(self) -> dict:
         """Return info about the various options set by the user."""
-        # options_dict = {
-        #     "allow_reserved_networks": self._allow_reserved_networks,
-        #     "concurrent": self._concurrent,
-        #     "limit_to_rfc1918": self._limit_to_rfc1918,
-        #     "filter": self._filter,
-        #     "filtermode": self._filter_mode,
-        #     "filename": self._filename,
-        #     "filemode": self._filemode,
-        # }
         return self._options_dict
 
     def items(self) -> dict:
@@ -442,7 +430,7 @@ class rdns_reaper:
         # raise KeyError("Address does not exist")
 
     def set_filter(self, filter_data: str, **kwargs):
-        """Setup a custom filter."""
+        """Define a custom filter."""
         if kwargs.get("mode") is None:
             self._options_dict["filter_mode"] = "block"
         elif kwargs.get("mode").lower() in ("allow", "block"):
@@ -511,15 +499,12 @@ class rdns_reaper:
 
         raise ValueError
 
-    class _reaper_iterator:
+    class _ReaperIterator:
         def __init__(self, parentclass):
             self.__parentclass = parentclass
             self.__counter = 0
             self.__parent_len = len(parentclass)
             self.__parent_keys = list(parentclass.keys())
-
-        # def __iter__(self):
-        #     return self
 
         def __next__(self):
             if self.__counter < self.__parent_len:
