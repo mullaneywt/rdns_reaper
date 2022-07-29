@@ -1,8 +1,9 @@
+import concurrent.futures
 import copy
 import socket
-import concurrent.futures
+
 import yaml
-from netaddr import IPAddress, IPSet, AddrFormatError
+from netaddr import AddrFormatError, IPAddress, IPSet
 
 IPV4_RESERVED_NETWORK_LIST = [
     "0.0.0.0/8",
@@ -170,9 +171,7 @@ class rdns_reaper:
 
     def __exit__(self, exception_type, exception_value, traceback):
         """Save file when class is being destroyed as appropriate."""
-        if (self._options_dict["filename"] is not None) and (
-            self._options_dict["filemode"] == "w"
-        ):
+        if (self._options_dict["filename"] is not None) and (self._options_dict["filemode"] == "w"):
             self.savefile(self._options_dict["filename"])
 
     def __getitem__(self, ip_address):
@@ -366,9 +365,7 @@ class rdns_reaper:
         else:
             IPv6_skipped_networks = IPSet()
 
-        initial_ip_list = [
-            key for key, value in self._dns_dict.items() if value is None
-        ]
+        initial_ip_list = [key for key, value in self._dns_dict.items() if value is None]
 
         pending_ipset = IPSet(initial_ip_list)
 

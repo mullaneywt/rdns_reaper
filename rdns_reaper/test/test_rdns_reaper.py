@@ -1,6 +1,7 @@
-# import pytest
+import os
+
+from netaddr import AddrFormatError, IPAddress, IPNetwork, IPSet
 from rdns_reaper import rdns_reaper
-from netaddr import IPAddress, IPNetwork, IPSet, AddrFormatError
 
 
 def test_simpletest_1():
@@ -410,6 +411,10 @@ def test_file_load4():
 
 
 def test_file_save_1():
+    try:
+        os.remove("rdns_reaper/test/savetest.yaml")
+    except FileNotFoundError:
+        pass
     dns1 = rdns_reaper(filename="rdns_reaper/test/savetest.yaml", filemode="w")
     dns1.add_ip("1.1.1.1", "one.one.one.one")
     dns1.savefile()
@@ -419,6 +424,10 @@ def test_file_save_1():
 
 
 def test_file_save_2():
+    try:
+        os.remove("rdns_reaper/test/savetest.yaml")
+    except FileNotFoundError:
+        pass
     with rdns_reaper(filename="rdns_reaper/test/savetest.yaml", filemode="w") as dns1:
         dns1.add_ip("1.1.1.1", "one.one.one.one")
 
