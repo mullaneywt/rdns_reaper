@@ -1,6 +1,57 @@
+[project]
+name="rdns_reaper"
+version="0.0.14.dev1"
+authors=[ 
+  {name ="Will Mullaney",email="rdns-reaper@mullaneywt.anonaddy.com"}
+]
+description="Reverse DNS lookup engine"
+readme = "README.md"
+keywords=["reverse", "dns"]
+license={ file = "LICENSE" }
+requires-python=">=3.6"
+dependencies=["netaddr>=0.8.0", "pyyaml>=6.0"]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Telecommunications Industry",
+    "Operating System :: OS Independent",
+    "Natural Language :: English",
+    "Topic :: Internet",
+    "Topic :: Internet :: Name Service (DNS)",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+    "Topic :: System :: Networking",
+    "Topic :: Utilities",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+
+
+[project.urls]
+"Home Page" = "https://github.com/mullaneywt/rdns_reaper"
+"Bug Tracker" = "https://github.com/mullaneywt/rdns_reaper/issues"
+"Source" = "https://github.com/mullaneywt/rdns_reaper/"
+"Documentation" = "https://rdns-reaper.readthedocs.io/"
+
+
 [build-system]
-requires = ["setuptools", "virtualenv"]
-build-backend = "setuptools.build_meta"
+#requires = ["setuptools", "virtualenv"]
+#build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.setuptools]
+packages = ["rdns_reaper"]
 
 [tool.black]
 line-length = 100
