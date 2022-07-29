@@ -43,7 +43,7 @@ IPV6_RESERVED_NETWORK_LIST = [
 ]
 
 
-class rdns_reaper:
+class RdnsReaper:
     """Reverse DNS Lookup Engine."""
 
     def __init__(self, **kwargs):
@@ -81,30 +81,30 @@ class rdns_reaper:
             "filter_mode": None,
             "limit_to_rfc1918": False,
         }
-        """Check for RFC1918 filtering"""
+        # Check for RFC1918 filtering
         if "limit_to_rfc1918" in kwargs:
             self.limit_to_rfc1918(kwargs["limit_to_rfc1918"])
         else:
             self._options_dict["limit_to_rfc1918"] = False
 
-        """Check for custom filtering"""
+        # Check for custom filtering
         if kwargs.get("filter") is not None:
             self.set_filter(kwargs.get("filter"), mode=kwargs.get("filtermode"))
 
-        """Allow reserved network check"""
+        # Allow reserved network check
         if kwargs.get("allow_reserved_networks"):
             self._options_dict["allow_reserved_networks"] = True
         else:
             self._options_dict["allow_reserved_networks"] = False
 
-        """Process parallel lookup concurrency"""
+        # Process parallel lookup concurrency
         if kwargs.get("concurrent"):
             if isinstance(kwargs["concurrent"], int):
                 self._options_dict["concurrent"] = kwargs["concurrent"]
             else:
                 raise TypeError
 
-        """Determine how to mark unresolvable entries"""
+        # Determine how to mark unresolvable entries
         try:
             if isinstance(kwargs["unresolvable"], str):
                 self._unresolvable = kwargs["unresolvable"]
@@ -143,7 +143,7 @@ class rdns_reaper:
     def __add__(self, new):
         """Add two instances together and return a deepcopy."""
         self_copy = copy.deepcopy(self)
-        if isinstance(new, rdns_reaper):
+        if isinstance(new, RdnsReaper):
             self_copy._dns_dict.update(new._dns_dict)
         elif isinstance(new, str):
             self_copy.add_ip(new)
@@ -186,7 +186,7 @@ class rdns_reaper:
 
     def __iadd__(self, new):
         """Add two instances together and return."""
-        if isinstance(new, rdns_reaper):
+        if isinstance(new, RdnsReaper):
             self._dns_dict.update(new._dns_dict)
         elif isinstance(new, str):
             self.add_ip(new)
@@ -342,16 +342,16 @@ class rdns_reaper:
     def _build_resolve_list(self):
         """Build list of IP's to perform resolver on, shared by serial and parallel methods."""
         if self._options_dict["limit_to_rfc1918"]:
-            IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
+            ipv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
         elif self._options_dict["allow_reserved_networks"] is False:
-            IPv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
+            ipv4_skipped_networks = IPSet(IPV4_RESERVED_NETWORK_LIST)
         else:
-            IPv4_skipped_networks = IPSet()
+            ipv4_skipped_networks = IPSet()
 
         if self._options_dict["allow_reserved_networks"] is False:
-            IPv6_skipped_networks = IPSet(IPV6_RESERVED_NETWORK_LIST)
+            ipv6_skipped_networks = IPSet(IPV6_RESERVED_NETWORK_LIST)
         else:
-            IPv6_skipped_networks = IPSet()
+            ipv6_skipped_networks = IPSet()
 
         initial_ip_list = [key for key, value in self._dns_dict.items() if value is None]
 
@@ -372,9 +372,9 @@ class rdns_reaper:
             address = IPAddress(key)
 
             if self._options_dict["limit_to_rfc1918"] is False:
-                if (address.version == 4) and (address not in IPv4_skipped_networks):
+                if (address.version == 4) and (address not in ipv4_skipped_networks):
                     pending_ips.append(key)
-                elif (address.version == 6) and (address not in IPv6_skipped_networks):
+                elif (address.version == 6) and (address not in ipv6_skipped_networks):
                     pending_ips.append(key)
             else:
                 if address in IPSet(IPV4_RFC1918_NETWORK_LIST):
@@ -457,9 +457,9 @@ class rdns_reaper:
         """Determine if an address is RFC1918 private or not."""
         address = IPAddress(address_txt)
         rfc1918_networks = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
-        rfc1918_IPSet = IPSet(rfc1918_networks)
+        rfc1918_ipset = IPSet(rfc1918_networks)
 
-        if address in rfc1918_IPSet:
+        if address in rfc1918_ipset:
             return True
         return False
 
@@ -469,31 +469,31 @@ class rdns_reaper:
         address = IPAddress(address_txt)
 
         if address.version == 4:
-            return rdns_reaper._isreservedIPv4(address_txt)
+            return RdnsReaper._isreservedipv4(address_txt)
         if address.version == 6:
-            return rdns_reaper._isreservedIPv6(address_txt)
+            return RdnsReaper._isreservedipv6(address_txt)
 
     @staticmethod
-    def _isreservedIPv4(address_txt: str | IPAddress) -> bool:
+    def _isreservedipv4(address_txt: str | IPAddress) -> bool:
         """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
         address = IPAddress(address_txt)
 
         if address.version == 4:
-            reserved_network_IPSet = IPSet(IPV4_RESERVED_NETWORK_LIST)
-            if address_txt in reserved_network_IPSet:
+            reserved_network_ipset = IPSet(IPV4_RESERVED_NETWORK_LIST)
+            if address_txt in reserved_network_ipset:
                 return True
             return False
 
         raise ValueError
 
     @staticmethod
-    def _isreservedIPv6(address_txt: str | IPAddress) -> bool:
+    def _isreservedipv6(address_txt: str | IPAddress) -> bool:
         """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
         address = IPAddress(address_txt)
 
         if address.version == 6:
-            reserved_network_IPSet = IPSet(IPV6_RESERVED_NETWORK_LIST)
-            if address_txt in reserved_network_IPSet:
+            reserved_network_ipset = IPSet(IPV6_RESERVED_NETWORK_LIST)
+            if address_txt in reserved_network_ipset:
                 return True
             return False
 

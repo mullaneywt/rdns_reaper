@@ -19,6 +19,23 @@ Documentation
 
 Read our documentation at https://rdns-reaper.readthedocs.io/en/latest/
 
+Object Name Change
+------------------
+
+**Note that starting with version 0.1.0, the reaper object has been renamed from rdns_reaper to RdnsReaper**
+
+For backwards compatability you can use the following import statement until your codebase is updated with the new name: 
+
+```python
+>>> from rdns_reaper import RdnsReaper as rdns_reaper
+```
+
+The correct import statement for all new applications is:
+
+```python
+>>> from rdns_reaper import RdnsReaper
+```
+
 
 Installation and Usage
 ----------------------
@@ -46,8 +63,8 @@ $ pip install git+https://github.com/mullaneywt/rdns_reaper/@0.0.10
 
 ### Usage
 ```python
->>> from rdns_reaper import rdns_reaper
->>> rdr = rdns_reaper(limit_to_rfc1918=False, concurrent=20, unresolvable=r"N\A")
+>>> from rdns_reaper import RdnsReaper
+>>> rdr = RdnsReaper(limit_to_rfc1918=False, concurrent=20, unresolvable=r"N\A")
 
 >>> iplist = ["8.8.8.8", "1.1.1.1", "8.8.4.4"]
 >>> rdr.add_ip_list(iplist)

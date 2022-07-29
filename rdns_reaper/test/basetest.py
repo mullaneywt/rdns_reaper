@@ -1,4 +1,4 @@
-from rdns_reaper import rdns_reaper
+from rdns_reaper import RdnsReaper as rdns_reaper
 
 
 def main():
@@ -27,7 +27,7 @@ def main():
     # dr.savefile("dns_test.yaml")
 
     d1 = rdns_reaper(
-        limit_to_rfc1918=None,
+        limit_to_rfc1918=False,
         concurrent=20,
         unresolvable=r"N\A",
         filename="d1.yaml",

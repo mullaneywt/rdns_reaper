@@ -1,13 +1,13 @@
 [project]
 name="rdns_reaper"
-version="0.0.14.dev1"
+version="0.1.0.dev3"
 authors=[ 
   {name ="Will Mullaney",email="rdns-reaper@mullaneywt.anonaddy.com"}
 ]
 description="Reverse DNS lookup engine"
 readme = "README.md"
 keywords=["reverse", "dns"]
-license={ file = "LICENSE" }
+license={ text="GNU GPL v3.0" }
 requires-python=">=3.6"
 dependencies=["netaddr>=0.8.0", "pyyaml>=6.0"]
 classifiers = [
@@ -40,8 +40,8 @@ classifiers = [
 [project.urls]
 "Home Page" = "https://github.com/mullaneywt/rdns_reaper"
 "Bug Tracker" = "https://github.com/mullaneywt/rdns_reaper/issues"
-"Source" = "https://github.com/mullaneywt/rdns_reaper/"
-"Documentation" = "https://rdns-reaper.readthedocs.io/"
+"Source" = "https://github.com/mullaneywt/rdns_reaper"
+"Documentation" = "https://rdns-reaper.readthedocs.io"
 
 
 [build-system]
@@ -49,6 +49,23 @@ classifiers = [
 #build-backend = "setuptools.build_meta"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch]
+packages = ["rdns_reaper"]
+
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "rdns_reaper/test",
+  "/.github",
+  "/docs",
+  ".gitignore",
+  "tox.ini",
+  "requirements.txt"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["rdns_reaper"]
 
 [tool.setuptools]
 packages = ["rdns_reaper"]

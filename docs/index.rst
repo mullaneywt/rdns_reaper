@@ -12,6 +12,18 @@ The library currently runs on IPv4 addresses and IPv6 address.  Entries can be c
 
 rdns-reaper is currently tested with Python 3.6-3.11
 
+Object Name Change
+------------------
+
+**Note that starting with version 0.1.0, the reaper object has been renamed from rdns_reaper to RdnsReaper**
+
+For backwards compatability you can use the following import statement until your codebase is updated with the new name: 
+
+`from rdns_reaper import RdnsReaper as rdns_reaper`
+
+The correct import statement for all new applications is:
+
+`from rdns_reaper import RdnsReaper`
 
 Important URLs:
 ---------------
