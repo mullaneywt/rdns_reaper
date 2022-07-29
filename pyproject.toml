@@ -1,6 +1,6 @@
 [project]
 name="rdns_reaper"
-version="0.1.0.dev1"
+version="0.1.0.dev2"
 authors=[ 
   {name ="Will Mullaney",email="rdns-reaper@mullaneywt.anonaddy.com"}
 ]
@@ -49,6 +49,23 @@ classifiers = [
 #build-backend = "setuptools.build_meta"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch]
+packages = ["rdns_reaper"]
+
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "rdns_reaper/test",
+  "/.github",
+  "/docs",
+  ".gitignore",
+  "tox.ini",
+  "requirements.txt"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["rdns_reaper"]
 
 [tool.setuptools]
 packages = ["rdns_reaper"]
