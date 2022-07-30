@@ -4,6 +4,7 @@
 ![PyPI](https://img.shields.io/pypi/v/rdns-reaper)
 ![piwheels](https://img.shields.io/piwheels/v/rdns-reaper)
 ![LGTM Grade](https://img.shields.io/lgtm/grade/python/github/mullaneywt/rdns_reaper)
+[![codecov](https://codecov.io/gh/mullaneywt/rdns_reaper/branch/main/graph/badge.svg?token=9H65KITHYI)](https://codecov.io/gh/mullaneywt/rdns_reaper)
 
 Build Status
 
