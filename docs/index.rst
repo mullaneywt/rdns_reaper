@@ -17,7 +17,7 @@ Object Name Change
 
 **Note that starting with version 0.1.0, the reaper object has been renamed from rdns_reaper to RdnsReaper**
 
-For backwards compatability you can use the following import statement until your codebase is updated with the new name: 
+For backwards compatability you can use the following import statement until your codebase is updated with the new name:
 
 `from rdns_reaper import RdnsReaper as rdns_reaper`
 
@@ -42,7 +42,7 @@ Navigation
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-   
+
    install
    basicusage
    supported
@@ -59,6 +59,3 @@ License
 -------
 
 Licensed under the GNU GPL v3.0
-
-
-

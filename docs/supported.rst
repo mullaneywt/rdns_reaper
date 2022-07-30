@@ -5,7 +5,7 @@ Supported Features
 Supported operators
 -------------------
 
-* \+, which can add two rdns_reaper objects, a string with a single IP address, or a set/list with one or more IP addresses 
+* \+, which can add two rdns_reaper objects, a string with a single IP address, or a set/list with one or more IP addresses
 * \+=, which can add two rdns_reaper objects, a string with a single IP address, or a set/list with one or more IP addresses
 
 Supported magic methods

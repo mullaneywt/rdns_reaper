@@ -3,6 +3,7 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/rdns-reaper)
 ![PyPI](https://img.shields.io/pypi/v/rdns-reaper)
 ![piwheels](https://img.shields.io/piwheels/v/rdns-reaper)
+![LGTM Grade](https://img.shields.io/lgtm/grade/python/github/mullaneywt/rdns_reaper)
 
 Build Status
 
@@ -30,7 +31,7 @@ Object Name Change
 
 **Note that starting with version 0.1.0, the reaper object has been renamed from rdns_reaper to RdnsReaper**
 
-For backwards compatability you can use the following import statement until your codebase is updated with the new name: 
+For backwards compatability you can use the following import statement until your codebase is updated with the new name:
 
 ```python
 >>> from rdns_reaper import RdnsReaper as rdns_reaper
@@ -104,7 +105,7 @@ The following parameters are supported when an instance of rdns_reaper is create
 Note that entries with None as a value will be reprocessed in subsequent resolver runs, while entries with any other value from the `unresolveable` parameter will not be processed again without manual intervention
 
 ### Supported operators
-* \+, which can add two rdns_reaper objects, a string with a single IP address, or a set/list with one or more IP addresses 
+* \+, which can add two rdns_reaper objects, a string with a single IP address, or a set/list with one or more IP addresses
 * \+=, which can add two rdns_reaper objects, a string with a single IP address, or a set/list with one or more IP addresses
 
 ### Supported magic methods

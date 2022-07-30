@@ -28,3 +28,10 @@ jobs:
 
         - name: Run tox
           run: tox
+
+        - name: Upload coverage to Codecov
+          # We only generate the coverage report in Python 3.9
+          if: "matrix.python-version == '3.9'"
+          uses: codecov/codecov-action@v2
+          with:
+            fail_ci_if_error: true
