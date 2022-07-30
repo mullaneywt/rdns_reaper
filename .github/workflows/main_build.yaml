@@ -37,7 +37,7 @@ jobs:
             pip install pytest
             pip install pytest-cov
             pip install pyyaml netaddr
-            pytest rdns_reaper/ --cov=./ --cov-report=xml
+            pytest rdns_reaper/ --cov=./ --cov-report=xml --cov-branch
         - name: Upload coverage to Codecov
           if: "matrix.python-version == '3.9'"
           uses: codecov/codecov-action@v3
