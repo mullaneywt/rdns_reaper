@@ -7,9 +7,9 @@
 Build Status
 
 ![Read the Docs](https://img.shields.io/readthedocs/rdns_reaper)
-![](https://github.com/mullaneywt/rdns_reaper/actions/workflows/dev_build.yaml/badge.svg)
-![](https://github.com/mullaneywt/rdns_reaper/actions/workflows/main_build.yaml/badge.svg)
 ![](https://github.com/mullaneywt/rdns_reaper/actions/workflows/releases_build.yaml/badge.svg)
+![](https://github.com/mullaneywt/rdns_reaper/actions/workflows/main_build.yaml/badge.svg)
+![](https://github.com/mullaneywt/rdns_reaper/actions/workflows/dev_build.yaml/badge.svg)
 
 rdns-reaper: Reverse DNS Lookup Engine
 ======================================
@@ -133,6 +133,19 @@ Note that entries with None as a value will be reprocessed in subsequent resolve
 * set_name(IP, NAME) - forces the name for a value (provided as strings)
 * set_filter(IPSet, [mode=]) - sets a custom filter based on an IPSet, IP network in a string, or a list of strings containing IP networks.  Optional mode argument can be `block` or `allow` to set filtering to a block list or allow list
 * values() - returns a list of all DNS names
+
+Issues and contributing
+-----------------------
+
+If you find any issues, feel free to create a new issue at our github repository at: https://github.com/mullaneywt/rdns_reaper/issues
+
+Make sure you include information about the version you're running, the environment you're running in, what data you've presented to the lookup engine, and what your responses/error information was.
+
+Feature requests can also be created as an issue on github at the repository above.
+
+For Python developers, if you have a new feature or a bug-fix that you've implemented, please open a pull request with some detailed information about what you intend to add or fix.
+
+If you still having questions, feel free to email the maintainer.
 
 License
 -------
