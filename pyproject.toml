@@ -67,6 +67,9 @@ exclude = [
 [tool.hatch.build.targets.wheel]
 packages = ["rdns_reaper"]
 
+[tool.isort]
+profile = "black"
+
 [tool.setuptools]
 packages = ["rdns_reaper"]
 

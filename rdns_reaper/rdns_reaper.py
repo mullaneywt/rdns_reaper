@@ -221,7 +221,7 @@ class RdnsReaper:
         """Generalized function for adding."""
         self.__iadd__(*args, **kwargs)
 
-    def add_ip(self, ip_address: str, hostname: str = None) -> bool | str:
+    def add_ip(self, ip_address: str, hostname: str = None):
         """Add an IP to the list with option hostname, skip if exists."""
         if ip_address in self._dns_dict.keys():
             return True
@@ -453,7 +453,7 @@ class RdnsReaper:
         return list(self._dns_dict.values())
 
     @staticmethod
-    def _isrfc1918(address_txt: str | IPAddress) -> bool:
+    def _isrfc1918(address_txt) -> bool:
         """Determine if an address is RFC1918 private or not."""
         address = IPAddress(address_txt)
         rfc1918_networks = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
@@ -464,7 +464,7 @@ class RdnsReaper:
         return False
 
     @staticmethod
-    def _isreservedaddress(address_txt: str | IPAddress) -> bool:
+    def _isreservedaddress(address_txt) -> bool:
         """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
         address = IPAddress(address_txt)
 
@@ -474,7 +474,7 @@ class RdnsReaper:
             return RdnsReaper._isreservedipv6(address_txt)
 
     @staticmethod
-    def _isreservedipv4(address_txt: str | IPAddress) -> bool:
+    def _isreservedipv4(address_txt) -> bool:
         """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
         address = IPAddress(address_txt)
 
@@ -487,7 +487,7 @@ class RdnsReaper:
         raise ValueError
 
     @staticmethod
-    def _isreservedipv6(address_txt: str | IPAddress) -> bool:
+    def _isreservedipv6(address_txt) -> bool:
         """Determine if an address is reserved (loopbacks, documentation, etc) or not."""
         address = IPAddress(address_txt)
 
