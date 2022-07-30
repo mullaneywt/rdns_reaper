@@ -36,6 +36,7 @@ jobs:
           run: |
             pip install pytest
             pip install pytest-cov
+            pip install pyyaml
             pytest rdns_reaper/ --cov=./ --cov-report=xml
         - name: Upload coverage to Codecov
           if: "matrix.python-version == '3.9'"
