@@ -3,7 +3,14 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/rdns-reaper)
 ![PyPI](https://img.shields.io/pypi/v/rdns-reaper)
 ![piwheels](https://img.shields.io/piwheels/v/rdns-reaper)
+![LGTM Grade](https://img.shields.io/lgtm/grade/python/github/mullaneywt/rdns_reaper)
+
+Build Status
+
 ![Read the Docs](https://img.shields.io/readthedocs/rdns_reaper)
+![](https://github.com/mullaneywt/rdns_reaper/actions/workflows/releases_build.yaml/badge.svg)
+![](https://github.com/mullaneywt/rdns_reaper/actions/workflows/main_build.yaml/badge.svg)
+![](https://github.com/mullaneywt/rdns_reaper/actions/workflows/dev_build.yaml/badge.svg)
 
 rdns-reaper: Reverse DNS Lookup Engine
 ======================================
@@ -18,6 +25,23 @@ Documentation
 -------------
 
 Read our documentation at https://rdns-reaper.readthedocs.io/en/latest/
+
+Object Name Change
+------------------
+
+**Note that starting with version 0.1.0, the reaper object has been renamed from rdns_reaper to RdnsReaper**
+
+For backwards compatability you can use the following import statement until your codebase is updated with the new name:
+
+```python
+>>> from rdns_reaper import RdnsReaper as rdns_reaper
+```
+
+The correct import statement for all new applications is:
+
+```python
+>>> from rdns_reaper import RdnsReaper
+```
 
 
 Installation and Usage
@@ -46,8 +70,8 @@ $ pip install git+https://github.com/mullaneywt/rdns_reaper/@0.0.10
 
 ### Usage
 ```python
->>> from rdns_reaper import rdns_reaper
->>> rdr = rdns_reaper(limit_to_rfc1918=False, concurrent=20, unresolvable=r"N\A")
+>>> from rdns_reaper import RdnsReaper
+>>> rdr = RdnsReaper(limit_to_rfc1918=False, concurrent=20, unresolvable=r"N\A")
 
 >>> iplist = ["8.8.8.8", "1.1.1.1", "8.8.4.4"]
 >>> rdr.add_ip_list(iplist)
@@ -81,7 +105,7 @@ The following parameters are supported when an instance of rdns_reaper is create
 Note that entries with None as a value will be reprocessed in subsequent resolver runs, while entries with any other value from the `unresolveable` parameter will not be processed again without manual intervention
 
 ### Supported operators
-* \+, which can add two rdns_reaper objects, a string with a single IP address, or a set/list with one or more IP addresses 
+* \+, which can add two rdns_reaper objects, a string with a single IP address, or a set/list with one or more IP addresses
 * \+=, which can add two rdns_reaper objects, a string with a single IP address, or a set/list with one or more IP addresses
 
 ### Supported magic methods
@@ -107,9 +131,22 @@ Note that entries with None as a value will be reprocessed in subsequent resolve
 * resolve_all() - launches a threaded resolver process
 * resolve_all_serial() - launches a singular serial resolver process
 * savefile() - forces a save of the YAML based disk cache
-* setname(IP, NAME) - forces the name for a value (provided as strings)
+* set_name(IP, NAME) - forces the name for a value (provided as strings)
 * set_filter(IPSet, [mode=]) - sets a custom filter based on an IPSet, IP network in a string, or a list of strings containing IP networks.  Optional mode argument can be `block` or `allow` to set filtering to a block list or allow list
 * values() - returns a list of all DNS names
+
+Issues and contributing
+-----------------------
+
+If you find any issues, feel free to create a new issue at our github repository at: https://github.com/mullaneywt/rdns_reaper/issues
+
+Make sure you include information about the version you're running, the environment you're running in, what data you've presented to the lookup engine, and what your responses/error information was.
+
+Feature requests can also be created as an issue on github at the repository above.
+
+For Python developers, if you have a new feature or a bug-fix that you've implemented, please open a pull request with some detailed information about what you intend to add or fix.
+
+If you still having questions, feel free to email the maintainer.
 
 License
 -------

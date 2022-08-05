@@ -1,3 +1,7 @@
+black
+build
+pylint
+pydocstyle
 pip
 twine
 setuptools
@@ -7,3 +11,4 @@ pyyaml
 pytest
 pytest-cov
 tox
+sphinx

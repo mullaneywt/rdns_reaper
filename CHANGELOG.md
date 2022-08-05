@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0
+
+Renamed the module's main class from rdns_reaper to RdnsReaper
+
+Significant update for testing, code cleanup, changed the underlying build system.  Enhanced documentation.
+
 ## 0.0.12
 
 Added option for allow/block list filtering with the .set_filter() method.  The .set_filter() method takes a single required parameter of an IP network formatted as a string, a list of IP networks formatted as strings, or a netaddr IPSet object.  The filter also takes an optional `mode` keyword argument with values of `allow` or `block` to change the filter between an allow filter or a block filter.
@@ -15,7 +21,7 @@ Changed to the GNU GPL v3.0 license.
 
 Minor bug fixes and code documentation changes.  Significant changes to README file to update documentation on github and PyPI.
 
-**Known Caveats** 
+**Known Caveats**
 
 From 0.0.5: should probably change around the checking of addresses to make it less resource intensive if you are processing a large list - further work should be done here to improve this
 
@@ -25,7 +31,7 @@ From 0.0.5: should probably change around the checking of addresses to make it l
 
 Basic IPv6 support is now available.  Reserved IPv6 addresses (multicast, link local, etc), will automatically be ignored by default
 
-**Known Caveats** 
+**Known Caveats**
 
 From 0.0.5: should probably change around the checking of addresses to make it less resource intensive if you are processing a large list - further work should be done here to improve this
 
@@ -35,7 +41,7 @@ From 0.0.5: should probably change around the checking of addresses to make it l
 
 Fixed a problem with the limit_to_rfc1918 function not actually doing anything
 
-**Known Caveats** 
+**Known Caveats**
 
 From 0.0.5: should probably change around the checking of addresses to make it less resource intensive if you are processing a large list
 
@@ -45,7 +51,7 @@ From 0.0.5: should probably change around the checking of addresses to make it l
 
 Fixed a problem with version strings in __init__
 
-**Known Caveats** 
+**Known Caveats**
 
 From 0.0.5: should probably change around the checking of addresses to make it less resource intensive if you are processing a large list
 
@@ -56,6 +62,6 @@ From 0.0.5: should probably change around the checking of addresses to make it l
 
 Fixed RFC1918 checking, added IPv4 version checking, check against the known reserved addresses (loopbacks, multicast, Class E, etc) and prevent resolver attempts against reserved addresses
 
-**Known Caveats** 
+**Known Caveats**
 
 should probably change around the checking of addresses to make it less resource intensive if you are processing a large list

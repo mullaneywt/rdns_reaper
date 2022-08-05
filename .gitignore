@@ -108,7 +108,6 @@ celerybeat.pid
 .env
 .venv
 env/
-venv/
 ENV/
 env.bak/
 venv.bak/
@@ -139,4 +138,7 @@ dmypy.json
 Sublime Project/
 
 
+rdns_reaper/test/savetest.yaml
 devtest.py
+.vscode
+*.code-workspace

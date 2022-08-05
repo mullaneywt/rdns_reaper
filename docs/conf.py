@@ -1,3 +1,5 @@
+# pylint: disable=W,C,R
+
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -13,8 +15,8 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../rdns_reaper"))
-import rdns_reaper
+# sys.path.insert(0, os.path.abspath("../rdns_reaper"))
+# import rdns_reaper
 
 
 # -- Project information -----------------------------------------------------
@@ -24,7 +26,7 @@ copyright = "2022, Will Mullaney"
 author = "Will Mullaney"
 
 # The full version, including alpha/beta/rc tags
-release = "0.0.12"
+release = "0.1.0"
 
 
 # -- General configuration ---------------------------------------------------
