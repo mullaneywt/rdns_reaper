@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0
+
+Renamed the module's main class from rdns_reaper to RdnsReaper
+
+Significant update for testing, code cleanup, changed the underlying build system.  Enhanced documentation.
+
 ## 0.0.12
 
 Added option for allow/block list filtering with the .set_filter() method.  The .set_filter() method takes a single required parameter of an IP network formatted as a string, a list of IP networks formatted as strings, or a netaddr IPSet object.  The filter also takes an optional `mode` keyword argument with values of `allow` or `block` to change the filter between an allow filter or a block filter.
