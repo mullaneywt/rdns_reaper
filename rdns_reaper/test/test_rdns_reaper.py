@@ -332,7 +332,10 @@ def test_get_dict():
 def test_items():
     dns1 = RdnsReaper()
     dns1.add_ip("1.1.1.1", "one.one.one.one")
-    assert dns1.items() == {"1.1.1.1": "one.one.one.one"}
+    dns1.add_ip("8.8.8.8", "dns.google")
+    assert isinstance(dns1.items(), type({}.items()))
+    l1 = list(dns1.items())
+    assert l1 == [("1.1.1.1", "one.one.one.one"), ("8.8.8.8", "dns.google")]
 
 
 def test_iterator():

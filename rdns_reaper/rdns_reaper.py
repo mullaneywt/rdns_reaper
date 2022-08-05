@@ -300,9 +300,9 @@ class RdnsReaper:
         """Return info about the various options set by the user."""
         return self._options_dict
 
-    def items(self) -> dict:
-        """Return the IP address and hostnames as k, v pairs in list format."""
-        return dict(self._dns_dict.items())
+    def items(self):
+        """Return the IP address and hostnames as a dict_items to allow iteration over k, v pairs."""
+        return self._dns_dict.items()
 
     def keys(self) -> list:
         """Return the IP address as keys in list format."""
