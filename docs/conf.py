@@ -26,7 +26,7 @@ copyright = "2022, Will Mullaney"
 author = "Will Mullaney"
 
 # The full version, including alpha/beta/rc tags
-release = "0.1.0.rc1"
+release = "0.1.0"
 
 
 # -- General configuration ---------------------------------------------------
