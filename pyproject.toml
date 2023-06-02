@@ -1,6 +1,6 @@
 [project]
 name="rdns_reaper"
-version="0.1.0"
+version="0.1.1"
 authors=[
   {name ="Will Mullaney",email="rdns-reaper@mullaneywt.anonaddy.com"}
 ]
@@ -8,7 +8,7 @@ description="Reverse DNS lookup engine"
 readme = "README.md"
 keywords=["reverse", "dns"]
 license={ text="GNU GPL v3.0" }
-requires-python=">=3.6"
+requires-python=">=3.7"
 dependencies=["netaddr>=0.8.0", "pyyaml>=6.0"]
 classifiers = [
     "Intended Audience :: Developers",
@@ -27,12 +27,12 @@ classifiers = [
     "Topic :: System :: Networking",
     "Topic :: Utilities",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 
 
