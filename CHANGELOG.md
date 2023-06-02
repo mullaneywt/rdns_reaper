@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+Added functionality to allow automatic saving of the disk based cache after the resolver_all command is called.  Keyword arguement "autosave" = True enables the feature.  "filemode" must be "w" and "filename" must be set or an exception will be raised
+
 ## 0.1.0
 
 Renamed the module's main class from rdns_reaper to RdnsReaper

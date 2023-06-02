@@ -53,6 +53,8 @@ class RdnsReaper:
             allow_reserved_networks (bool, optional): if True disable automatic filtering of
                 reserved networks, must be set to True if checking of any reserved networks
                 is desired.  Can then be supplemented with a custom filter
+            autosave (bool, optional): if True, automatically saves the cache file after the
+                resolver runs.  Filename must be present and filemode must be w
             concurrent (int, default = 5): number of concurrent resolver threads
             limit_to_rfc1918 (bool, optional): limit resolve to IPv4 RFC1918 only
             filter (str, list of strs, IPSet, optional): filter data
@@ -74,6 +76,7 @@ class RdnsReaper:
         self._concurrent = 5
         self._options_dict = {
             "allow_reserved_networks": False,
+            "autosave": False,
             "concurrent": 5,
             "filemode": None,
             "filename": None,
@@ -139,6 +142,16 @@ class RdnsReaper:
                 self.loadfile(self._options_dict["filename"])
             except FileNotFoundError:
                 pass
+
+        if kwargs.get("autosave") is True:
+            if (self._options_dict["filename"] is not None) and (
+                self._options_dict["filemode"] == "w"
+            ):
+                self._options_dict["autosave"] = True
+            else:
+                raise ValueError(
+                    'Autosave enabled but filename/mode not set correctly.  Filename must be present and mode must be "w".'
+                )
 
     def __add__(self, new):
         """Add two instances together and return a deepcopy."""
@@ -389,6 +402,9 @@ class RdnsReaper:
             max_workers=self._options_dict["concurrent"]
         ) as executor:
             executor.map(self._resolve_function, set(pending_ips))
+
+        if self._options_dict["autosave"] is True:
+            self.savefile()
 
     def resolve_all_serial(self):
         """Resolve all unknown IPs serially."""

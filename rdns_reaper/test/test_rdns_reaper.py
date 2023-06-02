@@ -212,6 +212,58 @@ def test_allow_reserved_networks_2():
     assert "224.0.0.0" in rl
 
 
+def test_auto_save_1():
+    """Test to make sure autosave enables correctly"""
+    dns1 = RdnsReaper(autosave=True, filename="savetest.yaml", filemode="w")
+    assert dns1._options_dict["autosave"] == True
+
+
+def test_auto_save_2():
+    """Test to make sure autosave throws an error if filename/mode aren't present or are incorrect"""
+    try:
+        dns1 = RdnsReaper(autosave=True, filename="savetest.yaml", filemode="r")
+    except ValueError:
+        assert True
+    else:
+        assert False
+
+    try:
+        dns1 = RdnsReaper(autosave=True, filename="savetest.yaml")
+    except ValueError:
+        assert True
+    else:
+        assert False
+
+    try:
+        dns1 = RdnsReaper(autosave=True, filemode="w")
+    except ValueError:
+        assert True
+    else:
+        assert False
+
+    try:
+        dns1 = RdnsReaper(autosave=True)
+    except ValueError:
+        assert True
+    else:
+        assert False
+
+
+def test_auto_save_3():
+    try:
+        os.remove("rdns_reaper/test/savetest.yaml")
+    except FileNotFoundError:
+        pass
+
+    dns1 = RdnsReaper(autosave=True, filename="savetest.yaml", filemode="w")
+    dns1.add(["1.1.1.1"])
+    dns1.resolve_all()
+
+    dns2 = RdnsReaper(filename="savetest.yaml", filemode="r")
+
+    assert dns2["1.1.1.1"] == "one.one.one.one"
+
+
 def test_clear_all_hostnames():
     test_hosts = ["1.1.1.1", "8.8.8.8"]
     dns1 = RdnsReaper()
@@ -434,8 +486,23 @@ def test_file_save_2():
         os.remove("rdns_reaper/test/savetest.yaml")
     except FileNotFoundError:
         pass
+
     with RdnsReaper(filename="rdns_reaper/test/savetest.yaml", filemode="w") as dns1:
         dns1.add_ip("1.1.1.1", "one.one.one.one")
+
+    with RdnsReaper(filename="rdns_reaper/test/savetest.yaml", filemode="r") as dns2:
+        assert dns2["1.1.1.1"] == "one.one.one.one"
+
+
+def test_file_save_3():
+    try:
+        os.remove("rdns_reaper/test/savetest.yaml")
+    except FileNotFoundError:
+        pass
+
+    with RdnsReaper(autosave=True, filename="rdns_reaper/test/savetest.yaml", filemode="w") as dns1:
+        dns1.add_ip("1.1.1.1", "one.one.one.one")
+        dns1.resolve_all()
 
     with RdnsReaper(filename="rdns_reaper/test/savetest.yaml", filemode="r") as dns2:
         assert dns2["1.1.1.1"] == "one.one.one.one"

@@ -94,6 +94,7 @@ The following parameters are supported when an instance of rdns_reaper is create
 |parameter|type|description|default|
 |-|-|-|-|
 | allow_reserved_networks | boolean | Disables automatic filtering of IPv4/IPv6 reserved networks | False |
+| autosave | boolean | Automatically saves disk based cache when resolve_all() is called | False |
 | limit_to_rfc1918 | boolean | Limits checking to only IPv4 RFC1918 address space (IPv6 entirely disabled) | False |
 | concurrent | integer | Number of concurrent resolver threads to use | 5 |
 | unresolvable | string | Value to populate if resolving fails | None |
