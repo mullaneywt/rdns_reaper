@@ -264,6 +264,34 @@ def test_auto_save_3():
     assert dns2["1.1.1.1"] == "one.one.one.one"
 
 
+def test_auto_save_4():
+    try:
+        os.remove("rdns_reaper/test/savetest.yaml")
+    except FileNotFoundError:
+        pass
+
+    dns1 = RdnsReaper(filename="savetest.yaml", filemode="w")
+    assert dns1._options_dict["autosave"] == False
+    dns1.autosave(True)
+    assert dns1._options_dict["autosave"] == True
+    dns1.autosave(False)
+
+    try:
+        dns1.autosave("DNS")
+    except TypeError:
+        assert True
+    else:
+        assert False
+
+    dns2 = RdnsReaper()
+    try:
+        dns2.autosave(True)
+    except ValueError:
+        assert True
+    else:
+        assert False
+
+
 def test_clear_all_hostnames():
     test_hosts = ["1.1.1.1", "8.8.8.8"]
     dns1 = RdnsReaper()
@@ -443,7 +471,7 @@ def test_file_load_2():
         assert dns["1.1.1.1"] == "one.one.one.one"
 
 
-def test_file_load3():
+def test_file_load_3():
     try:
         dns = RdnsReaper(filename="rdns_reaper/test/loadtest.yaml", filemode="q")
     except ValueError:
@@ -459,7 +487,7 @@ def test_file_load3():
         assert False
 
 
-def test_file_load4():
+def test_file_load_4():
     try:
         dns = RdnsReaper(filename="rdns_reaper/test/taco.yaml", filemode="r")
     except:
@@ -616,7 +644,7 @@ def test_resolver_all_1():
     assert "10.0.0.1" in dns2._build_resolve_list()
 
 
-def test_setname():
+def test_set_name():
     dns1 = RdnsReaper()
     dns1 += ["1.1.1.1", "8.8.8.8"]
     dns1.set_name("1.1.1.1", "one.one.one.one")
@@ -634,3 +662,53 @@ def test_setname():
         assert True
     else:
         assert False
+
+
+def test_set_file_1():
+    try:
+        os.remove("rdns_reaper/test/savetest.yaml")
+    except FileNotFoundError:
+        pass
+
+    dns1 = RdnsReaper(filename="savetest.yaml", filemode="r")
+    dns1.set_file(None)
+    assert dns1._options_dict["filename"] is None
+    assert dns1._options_dict["filemode"] is None
+
+    dns1 = RdnsReaper(filename="savetest.yaml", filemode="r")
+    dns1.set_file("savetest.yaml")
+    assert dns1._options_dict["filename"] is None
+    assert dns1._options_dict["filemode"] is None
+
+    try:
+        dns1.set_file(123)
+    except TypeError:
+        assert True
+    else:
+        assert False
+
+    try:
+        dns1.set_file("savetest.yaml", 53)
+    except ValueError:
+        assert True
+    else:
+        assert False
+
+    dns2 = RdnsReaper()
+    dns2.set_file("savetest.yaml", filemode="r")
+    assert dns2._options_dict["filename"] == "savetest.yaml"
+    assert dns2._options_dict["filemode"] == "r"
+    dns2.set_file("savetest.yaml", filemode="w")
+    assert dns2._options_dict["filename"] == "savetest.yaml"
+    assert dns2._options_dict["filemode"] == "w"
+
+
+def test_cleanup():
+    try:
+        os.remove("rdns_reaper/test/savetest.yaml")
+    except FileNotFoundError:
+        pass
+    try:
+        os.remove("savetest.yaml")
+    except FileNotFoundError:
+        pass

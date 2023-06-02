@@ -1,6 +1,6 @@
 [project]
 name="rdns_reaper"
-version="0.1.1.rc1"
+version="0.1.1"
 authors=[
   {name ="Will Mullaney",email="rdns-reaper@mullaneywt.anonaddy.com"}
 ]

@@ -120,6 +120,7 @@ Note that entries with None as a value will be reprocessed in subsequent resolve
 * add_ip(IP) - adds an IP address (provided as a string)
 * add_ip_list(IP_LIST) - adds IP addresses (provided as a list of strings)
 * allow_reserved_networks() - disable/enable automatic filter of reserved networks
+* autosave() - disable/enable automatic saving of disk based cache
 * clear_all_hostnames() - resets all names to None across entire instance
 * clearname(IP) - resets a name to None
 * get_dict() - returns a dictionary with addresses as keys and names as values
@@ -132,8 +133,9 @@ Note that entries with None as a value will be reprocessed in subsequent resolve
 * resolve_all() - launches a threaded resolver process
 * resolve_all_serial() - launches a singular serial resolver process
 * savefile() - forces a save of the YAML based disk cache
-* set_name(IP, NAME) - forces the name for a value (provided as strings)
+* set_file(FILENAME, MODE) - sets the filename and mode ("r"|"w") for disk based cache
 * set_filter(IPSet, [mode=]) - sets a custom filter based on an IPSet, IP network in a string, or a list of strings containing IP networks.  Optional mode argument can be `block` or `allow` to set filtering to a block list or allow list
+* set_name(IP, NAME) - forces the name for a value (provided as strings)
 * values() - returns a list of all DNS names
 
 Issues and contributing
