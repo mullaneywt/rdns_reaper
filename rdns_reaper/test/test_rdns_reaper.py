@@ -462,25 +462,25 @@ def test_kwargs_unresolvable():
 
 
 def test_file_load_1():
-    dns = RdnsReaper(filename="rdns_reaper/test/loadtest.yaml", filemode="r")
+    dns = RdnsReaper(filename="rdns_reaper/test/loadtest-0.1.1.yaml", filemode="r")
     assert dns["1.1.1.1"] == "one.one.one.one"
 
 
 def test_file_load_2():
-    with RdnsReaper(filename="rdns_reaper/test/loadtest.yaml", filemode="r") as dns:
+    with RdnsReaper(filename="rdns_reaper/test/loadtest-0.1.1.yaml", filemode="r") as dns:
         assert dns["1.1.1.1"] == "one.one.one.one"
 
 
 def test_file_load_3():
     try:
-        dns = RdnsReaper(filename="rdns_reaper/test/loadtest.yaml", filemode="q")
+        dns = RdnsReaper(filename="rdns_reaper/test/loadtest-0.1.1.yaml", filemode="q")
     except ValueError:
         assert True
     else:
         assert False
 
     try:
-        dns = RdnsReaper(filename="rdns_reaper/test/loadtest.yaml", filemode=False)
+        dns = RdnsReaper(filename="rdns_reaper/test/loadtest-0.1.1.yaml", filemode=False)
     except TypeError:
         assert True
     else:
@@ -494,6 +494,11 @@ def test_file_load_4():
         assert False
     else:
         assert True
+
+
+def test_file_load_5():
+    dns = RdnsReaper(filename="rdns_reaper/test/loadtest-0.1.2.yaml", filemode="r")
+    assert dns["1.1.1.1"] == "one.one.one.one"
 
 
 def test_file_save_1():
@@ -636,7 +641,7 @@ def test_resolver_all_1():
     dns1.resolve_all()
 
     assert dns1["1.1.1.1"] == "one.one.one.one"
-    assert dns1["2600::"] == "www.sprint.net"
+    assert dns1["2600::"] == "2600.cogentco.com"
 
     dns2 = RdnsReaper(limit_to_rfc1918=True)
     dns2.add(["1.1.1.1", "10.0.0.1"])

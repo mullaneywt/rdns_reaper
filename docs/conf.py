@@ -22,11 +22,11 @@ import sys
 # -- Project information -----------------------------------------------------
 
 project = "rdns_reaper"
-copyright = "2023, Will Mullaney"
+copyright = "2024, Will Mullaney"
 author = "Will Mullaney"
 
 # The full version, including alpha/beta/rc tags
-release = "0.1.1"
+release = "0.1.2"
 
 
 # -- General configuration ---------------------------------------------------
