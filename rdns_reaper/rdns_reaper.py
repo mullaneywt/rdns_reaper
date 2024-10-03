@@ -53,6 +53,8 @@ class RdnsReaper:
             allow_reserved_networks (bool, optional): if True disable automatic filtering of
                 reserved networks, must be set to True if checking of any reserved networks
                 is desired.  Can then be supplemented with a custom filter
+            autosave (bool, optional): if True, automatically saves the cache file after the
+                resolver runs.  Filename must be present and filemode must be w
             concurrent (int, default = 5): number of concurrent resolver threads
             limit_to_rfc1918 (bool, optional): limit resolve to IPv4 RFC1918 only
             filter (str, list of strs, IPSet, optional): filter data
@@ -74,6 +76,7 @@ class RdnsReaper:
         self._concurrent = 5
         self._options_dict = {
             "allow_reserved_networks": False,
+            "autosave": False,
             "concurrent": 5,
             "filemode": None,
             "filename": None,
@@ -139,6 +142,17 @@ class RdnsReaper:
                 self.loadfile(self._options_dict["filename"])
             except FileNotFoundError:
                 pass
+
+        if kwargs.get("autosave") is True:
+            if (self._options_dict["filename"] is not None) and (
+                self._options_dict["filemode"] == "w"
+            ):
+                self._options_dict["autosave"] = True
+            else:
+                raise ValueError(
+                    "Autosave enabled but filename/mode not set correctly."
+                    ' Filename must be present and mode must be "w".'
+                )
 
     def __add__(self, new):
         """Add two instances together and return a deepcopy."""
@@ -263,6 +277,33 @@ class RdnsReaper:
 
         self._options_dict["allow_reserved_networks"] = option
 
+    def autosave(self, option: bool):
+        """Allow users to enable/disable automatic saving of disk based cache
+
+        The filename and filemode options must already be set or attempting to turn this on will
+        cause an exception to be raised.
+
+        Args:
+            option (bool) Set to True to enable automatic saving of disk based cache
+
+        """
+        if not isinstance(option, bool):
+            raise TypeError()
+
+        if option:
+            if (self._options_dict["filename"] is not None) and (
+                self._options_dict["filemode"] == "w"
+            ):
+                self._options_dict["autosave"] = True
+            else:
+                raise ValueError(
+                    "Autosave enabled but filename/mode not set correctly."
+                    ' Filename must be present and mode must be "w".'
+                )
+
+        if option is False:
+            self._options_dict["autosave"] = False
+
     def clear_all_hostnames(self):
         """Clear all the hostnames from existing entries."""
         new_ip_dict = {ip: None for ip in self._dns_dict}
@@ -300,9 +341,9 @@ class RdnsReaper:
         """Return info about the various options set by the user."""
         return self._options_dict
 
-    def items(self) -> dict:
-        """Return the IP address and hostnames as k, v pairs in list format."""
-        return dict(self._dns_dict.items())
+    def items(self):
+        """Return the IP address and hostnames as a dict_items to allow iteration over k, v pairs."""
+        return self._dns_dict.items()
 
     def keys(self) -> list:
         """Return the IP address as keys in list format."""
@@ -390,6 +431,9 @@ class RdnsReaper:
         ) as executor:
             executor.map(self._resolve_function, set(pending_ips))
 
+        if self._options_dict["autosave"] is True:
+            self.savefile()
+
     def resolve_all_serial(self):
         """Resolve all unknown IPs serially."""
         pending_ips = self._build_resolve_list()
@@ -410,24 +454,27 @@ class RdnsReaper:
             f_handle.write("---\n")
             f_handle.write(yaml.dump(self._dns_dict))
 
-    def set_name(self, ip_address: str, hostname: str):
-        """Force the hostname of an IP.
+    def set_file(self, filename, filemode=None):
+        """Set the filename and filemode for the disk based cache
 
         Args:
-            ip_address (str): String containing an IP address to be modified
-            hostname (str): Desired FQDN hostname to be set for this entry
-                Can be None to reset record to allow for subsequent lookup
-        """
-        try:
-            IPAddress(ip_address)
-        except AddrFormatError as error_case:
-            raise TypeError(f"IP Error: {error_case}") from error_case
+            filename (str): Filename (path optional) for disk based cache
+            filemode (str): Read/write mode ("r"|"w") option for disk based cache
 
-        if ip_address not in self._dns_dict.keys():
-            raise KeyError("Address does not exist")
-        self._dns_dict[ip_address] = hostname
-        # except KeyError as error_case:
-        # raise KeyError("Address does not exist")
+        """
+        if not (isinstance(filename, str) or filename is None):
+            raise TypeError("String type expected")
+
+        if filename is None or filemode is None:
+            self._options_dict["filename"] = None
+            self._options_dict["filemode"] = None
+            return
+
+        if filemode not in ("r", "w"):
+            raise ValueError('Filemode must be "R" or "W"')
+
+        self._options_dict["filename"] = filename
+        self._options_dict["filemode"] = filemode
 
     def set_filter(self, filter_data: str, **kwargs):
         """Define a custom filter."""
@@ -447,6 +494,25 @@ class RdnsReaper:
             raise TypeError
 
         self._options_dict["filter"] = filter_data
+
+    def set_name(self, ip_address: str, hostname: str):
+        """Force the hostname of an IP.
+
+        Args:
+            ip_address (str): String containing an IP address to be modified
+            hostname (str): Desired FQDN hostname to be set for this entry
+                Can be None to reset record to allow for subsequent lookup
+        """
+        try:
+            IPAddress(ip_address)
+        except AddrFormatError as error_case:
+            raise TypeError(f"IP Error: {error_case}") from error_case
+
+        if ip_address not in self._dns_dict.keys():
+            raise KeyError("Address does not exist")
+        self._dns_dict[ip_address] = hostname
+        # except KeyError as error_case:
+        # raise KeyError("Address does not exist")
 
     def values(self) -> list:
         """Return the hostnames as values in list format."""

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.1
+
+Added functionality to allow automatic saving of the disk based cache after the resolver_all command is called.  Keyword arguement "autosave" = True enables the feature.  "filemode" must be "w" and "filename" must be set or an exception will be raised
+
+## 0.1.0
+
+Renamed the module's main class from rdns_reaper to RdnsReaper
+
+Significant update for testing, code cleanup, changed the underlying build system.  Enhanced documentation.
+
 ## 0.0.12
 
 Added option for allow/block list filtering with the .set_filter() method.  The .set_filter() method takes a single required parameter of an IP network formatted as a string, a list of IP networks formatted as strings, or a netaddr IPSet object.  The filter also takes an optional `mode` keyword argument with values of `allow` or `block` to change the filter between an allow filter or a block filter.
