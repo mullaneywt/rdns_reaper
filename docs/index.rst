@@ -10,7 +10,7 @@ rdns-reaper is a multi-threaded lookup engine for Python v3 to resolve DNS names
 
 The library currently runs on IPv4 addresses and IPv6 address.  Entries can be cached to disk to prevent excessive querying.  Limited filtering exists to restrict lookups to RFC1918 IPv4 space as an option.
 
-rdns-reaper is currently tested with Python 3.6-3.11
+rdns-reaper is currently tested with Python 3.6-3.12
 
 Object Name Change
 ------------------

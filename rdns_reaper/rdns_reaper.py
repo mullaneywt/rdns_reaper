@@ -2,8 +2,8 @@ import concurrent.futures
 import copy
 import socket
 
-import yaml
 from netaddr import AddrFormatError, IPAddress, IPSet
+from ruamel.yaml import YAML
 
 IPV4_RESERVED_NETWORK_LIST = [
     "0.0.0.0/8",
@@ -363,7 +363,8 @@ class RdnsReaper:
         """
         with open(filename, encoding="UTF-8") as f_handle:
             f_data = f_handle.read()
-            self._dns_dict = yaml.safe_load(f_data)
+            yaml = YAML(typ="safe", pure=True)
+            self._dns_dict = yaml.load(f_data)
 
     def remove_ip(self, ip_address: str) -> bool:
         """Remove an IP from the list, return false if not found.
@@ -452,7 +453,9 @@ class RdnsReaper:
 
         with open(filename, "w", encoding="UTF-8") as f_handle:
             f_handle.write("---\n")
-            f_handle.write(yaml.dump(self._dns_dict))
+            yaml = YAML(typ="safe", pure=True)
+            # f_handle.write(yaml.dump(self._dns_dict))
+            yaml.dump(self._dns_dict, f_handle)
 
     def set_file(self, filename, filemode=None):
         """Set the filename and filemode for the disk based cache
