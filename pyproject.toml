@@ -1,6 +1,6 @@
 [project]
 name="rdns_reaper"
-version="0.1.1"
+version="0.1.2"
 authors=[
   {name ="Will Mullaney",email="rdns-reaper@mullaneywt.anonaddy.com"}
 ]
@@ -75,7 +75,7 @@ packages = ["rdns_reaper"]
 
 [tool.black]
 line-length = 100
-target_version = ['py310']
+target_version = ['py312']
 include = '\.pyi?$'
 exclude = '''
 
@@ -94,7 +94,6 @@ exclude = '''
     | build
     | dist
   )/
-  | foo.py           # also separately exclude a file named foo.py in
                      # the root of the project
 )
 '''

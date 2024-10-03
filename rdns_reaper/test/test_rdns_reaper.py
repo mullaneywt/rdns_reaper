@@ -636,7 +636,7 @@ def test_resolver_all_1():
     dns1.resolve_all()
 
     assert dns1["1.1.1.1"] == "one.one.one.one"
-    assert dns1["2600::"] == "www.sprint.net"
+    assert dns1["2600::"] == "2600.cogentco.com"
 
     dns2 = RdnsReaper(limit_to_rfc1918=True)
     dns2.add(["1.1.1.1", "10.0.0.1"])
