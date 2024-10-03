@@ -7,7 +7,7 @@
 | 0.0.12+   | :white_check_mark: |Bug and Security Fixed Only|
 | <0.0.12   | :x: |Not supported, upgrade recommended|
 
-Versions are currently tested from Python 3.6 - 3.11 by developers, and 3.6-3.10 automatically by Github.
+Versions are currently tested from Python 3.6 - 3.12 by developers, and 3.10-3.12 automatically by Github.
 
 
 ## Reporting a Vulnerability

@@ -9,9 +9,9 @@ Latest Version
 
 >>> pip install rdns-reaper
 
-For a specific version (e.g. 0.0.10)
+For a specific version (e.g. 0.1.2)
 
->>> pip install rdns-reaper==0.0.10
+>>> pip install rdns-reaper==0.1.2
 
 
 
@@ -27,6 +27,6 @@ Latest Release Candidate
 
 >>> pip install git+https://github.com/mullaneywt/rdns_reaper/
 
-Specific Release Version (e.g. 0.0.10)
+Specific Release Version (e.g. 0.1.2)
 
->>> pip install git+https://github.com/mullaneywt/rdns_reaper/@0.0.10
+>>> pip install git+https://github.com/mullaneywt/rdns_reaper/@0.1.2
