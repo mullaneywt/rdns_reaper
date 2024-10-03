@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2
+
+Updated testing and github integration
+Swap from the pyyaml library to ruamel.yaml
+
 ## 0.1.1
 
 Added functionality to allow automatic saving of the disk based cache after the resolver_all command is called.  Keyword arguement "autosave" = True enables the feature.  "filemode" must be "w" and "filename" must be set or an exception will be raised
